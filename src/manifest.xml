@@ -20,8 +20,8 @@
   <Description DefaultValue="Suplemento para Excel da Central de Cálculos da Justiça Federal de São Paulo."/>
 
   <!-- Icon for your add-in. Used on installation screens and the add-ins dialog. -->
-  <IconUrl DefaultValue="{{base}}/assets/images/icon-32.png" />
-  <HighResolutionIconUrl DefaultValue="{{base}}/assets/images/icon-64.png"/>
+  <IconUrl DefaultValue="{{base}}/icon-32.png" />
+  <HighResolutionIconUrl DefaultValue="{{base}}/icon-64.png"/>
 
   <!--If you plan to submit this add-in to the Office Store, uncomment the SupportUrl element below-->
   <!--<SupportUrl DefaultValue="[Insert the URL of a page that provides support information for the app]" />-->
@@ -124,7 +124,7 @@
         <bt:Image id="Icon.80x80" DefaultValue="{{base}}/icon-80.png"/>
       </bt:Images>
       <bt:Urls>
-        <bt:Url id="GetStarted.LearnMoreUrl" DefaultValue="https://cecalc.github.io#readme" />
+        <bt:Url id="GetStarted.LearnMoreUrl" DefaultValue="https://cecalc.github.io/xl-calculos-judiciais#readme" />
         <bt:Url id="Taskpane.Url" DefaultValue="{{base}}/index.html" />
       </bt:Urls>
       <!-- ShortStrings max characters==125. -->

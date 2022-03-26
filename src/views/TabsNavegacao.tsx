@@ -21,7 +21,7 @@ export default function BarraNevegacao() {
   return (
     <Pivot
       aria-label="Barra de Navegação"
-      linkSize="large"
+      linkSize="normal"
       overflowBehavior="menu"
       overflowAriaLabel="mais itens"
     >
