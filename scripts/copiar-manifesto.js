@@ -6,7 +6,7 @@ function copiarManifesto() {
   data = data
     .replace(
       /\{\{base\}\}/g,
-      isDev ? `https://localhost:3000` : 'https://cecal.github.io/xl-calculos-judiciais'
+      isDev ? `https://localhost:3000` : 'https://cecalc.github.io/xl-calculos-judiciais'
     )
     .replace(/<!--[\s\S]*?-->/g, '')
     .replace(/[^\S\r\n]+\n/g, '')
