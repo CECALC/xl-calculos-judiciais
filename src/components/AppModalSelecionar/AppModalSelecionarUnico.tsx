@@ -34,7 +34,7 @@ export default function AppModalSelecionarUnico({
   aoDispensar
 }: IProps) {
   const [temOpcoes, mudarTemOpcoes] = useState<boolean>(Array.isArray(opcoes) && opcoes.length > 0)
-  const [selecionada, setSelecionada] = useState<string>(temOpcoes ? opcoes[0].key : '')
+  const [selecionada, setSelecionada] = useState<string>(Array.isArray(opcoes) && opcoes.length > 0 ? opcoes[0].key : '')
 
   useEffect(() => {
     mudarTemOpcoes(Array.isArray(opcoes) && opcoes.length > 0)

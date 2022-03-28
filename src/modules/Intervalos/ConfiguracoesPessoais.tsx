@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { 
-  mergeStyles, 
   IStackTokens, 
   Stack, 
   DefaultButton, 
@@ -17,23 +16,6 @@ import {
 } from '../../services'
 
 const stackTokens: IStackTokens = { childrenGap: 40 }
-
-const icone = {
-  salvar: 'Save',
-  recuperar: 'Download',
-  processando: 'Sync'
-}
-
-const classeCarregando = mergeStyles({
-  selectors: {
-    svg: {
-      animationName: 'rotacao',
-      animationDuration: '1s',
-      animationIterationCount: 'infinite',
-      animationTimingFunction: 'linear'
-    }
-  }
-})
 
 enum MODO {
   SALVAR,
@@ -103,24 +85,18 @@ export default function ConfiguracoesPessoais() {
 
   return (
     <>
-      <AppCartao titulo="Configurações Pessoais" icone="ColumnOptions">
+      <AppCartao titulo="Configurações Pessoais" icone="ColumnOptions" atualizando={salvando || recuperando}>
         <Stack horizontal tokens={stackTokens} horizontalAlign="center">
           <PrimaryButton
             text="Salvar"
-            iconProps={{
-              iconName: salvando ? icone.processando : icone.salvar,
-              className: salvando ? classeCarregando : ''
-            }}
+            iconProps={{ iconName: 'Save' }}
             onClick={selecionarParaSalvar}
             allowDisabledFocus
             disabled={salvando || recuperando}
           />
           <DefaultButton
             text="Recuperar"
-            iconProps={{
-              iconName: recuperando ? icone.processando : icone.recuperar,
-              className: recuperando ? classeCarregando : ''
-            }}
+            iconProps={{ iconName: 'Download' }}
             onClick={selecionarParaRecuperar}
             allowDisabledFocus
             disabled={recuperando || salvando}

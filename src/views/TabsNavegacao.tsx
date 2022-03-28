@@ -1,10 +1,11 @@
+import React from 'react'
 import { mergeStyles, Pivot, PivotItem, Stack, IStackTokens } from '@fluentui/react'
 import {
   AreaDeTransferencia,
   CalculadorasPrevidenciarias,
   ConfiguracoesPessoais,
   PreenchimentoAutomatico,
-  AtualizarIndices,
+  // AtualizarIndices, // aguardando implementação webservice de índices
   EditarConfiguracoes
 } from '../modules'
 
@@ -51,9 +52,9 @@ export default function BarraNevegacao() {
       </PivotItem>
       <PivotItem headerText="Avançado" itemIcon="Settings">
         <Stack horizontalAlign="center" tokens={verticalGapStackTokens}>
-          <Stack.Item className={stackItemStyles}>
+          {/* <Stack.Item className={stackItemStyles}>
             <AtualizarIndices />
-          </Stack.Item>
+          </Stack.Item> */}
           <Stack.Item className={stackItemStyles}>
             <EditarConfiguracoes />
           </Stack.Item>

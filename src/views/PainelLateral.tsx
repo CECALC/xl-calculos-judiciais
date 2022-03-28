@@ -1,3 +1,4 @@
+import React from 'react'
 import { 
   ITheme, 
   mergeStyleSets, 
@@ -7,7 +8,7 @@ import {
   Panel,
   Icon, 
   FocusZone, 
-  FocusZoneDirection 
+  FocusZoneDirection
 } from '@fluentui/react'
 
 interface IProps {
@@ -68,6 +69,13 @@ const classNames = mergeStyleSets({
       textDecoration: 'none',
       color: palette.neutralDark
     }
+  ],
+  copyright: [
+    fonts.small,
+    {
+      display: 'flex',
+      justifyContent: 'space-between'
+    }
   ]
 })
 
@@ -82,6 +90,15 @@ const onRenderCell = (item?: IItem): JSX.Element => {
   )
 }
 
+const onRenderFooterContent = (): JSX.Element => {
+  return (
+    <div className={classNames.copyright}>
+      <span>© {new Date().getFullYear()} CECALC</span>
+      <span>adm-sp-cecalc@trf3.jus.br</span>
+    </div>
+  )
+}
+
 export default function PainelLateral({ abrir, onDismiss }: IProps) {
   return (
     <Panel
@@ -90,6 +107,8 @@ export default function PainelLateral({ abrir, onDismiss }: IProps) {
       onDismiss={onDismiss}
       closeButtonAriaLabel="Fechar"
       headerText="Ajuda"
+      onRenderFooterContent={onRenderFooterContent}
+      isFooterAtBottom={true}      
     >
       <FocusZone direction={FocusZoneDirection.vertical}>
         <List items={itens} onRenderCell={onRenderCell} />

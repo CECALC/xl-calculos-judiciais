@@ -1,4 +1,4 @@
-import { ReactNode, Component, ErrorInfo } from 'react'
+import React, { ReactNode, Component, ErrorInfo } from 'react'
 import { depurador } from '../utils'
 
 interface Props {

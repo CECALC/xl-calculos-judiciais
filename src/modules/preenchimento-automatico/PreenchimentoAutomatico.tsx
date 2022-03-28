@@ -4,8 +4,7 @@ import {
   Stack, 
   DefaultButton, 
   PrimaryButton, 
-  IChoiceGroupOption, 
-  mergeStyles 
+  IChoiceGroupOption
 } from '@fluentui/react'
 import { AnalisadorDeTexto, IOpcao } from '@cecalc/analisador-de-texto'
 import { debounce } from '@cecalc/utils'
@@ -16,23 +15,6 @@ import CaixaDeTexto from './CaixaDeTexto'
 import { preencherIntervalos } from './auxiliares'
 
 const stackTokens: IStackTokens = { childrenGap: 40 }
-
-const icone = {
-  preencher: 'LightningBolt',
-  apagar: 'EraseTool',
-  processando: 'Sync'
-}
-
-const classeCarregando = mergeStyles({
-  selectors: {
-    svg: {
-      animationName: 'rotacao',
-      animationDuration: '1s',
-      animationIterationCount: 'infinite',
-      animationTimingFunction: 'linear'
-    }
-  }
-})
 
 interface IState {
   carregado: boolean
@@ -169,6 +151,7 @@ export default class PreenchimentoAutomatico extends Component {
           icone="AutoEnhanceOn"
           ativo={this.state.carregado && this.state.identificado}
           erro={this.state.carregado && !this.state.identificado}
+          atualizando={this.state.preenchendo}
         >
           <Stack>
             <CaixaDeTexto
@@ -180,10 +163,7 @@ export default class PreenchimentoAutomatico extends Component {
             <Stack horizontal tokens={stackTokens} horizontalAlign="center">
               <PrimaryButton
                 text="Preencher"
-                iconProps={{
-                  iconName: this.state.preenchendo ? icone.processando : icone.preencher,
-                  className: this.state.preenchendo ? classeCarregando : ''
-                }}
+                iconProps={{ iconName: 'LightningBolt' }}
                 onClick={this.selecionar}
                 allowDisabledFocus
                 disabled={
@@ -192,9 +172,7 @@ export default class PreenchimentoAutomatico extends Component {
               />
               <DefaultButton
                 text="Apagar"
-                iconProps={{
-                  iconName: icone.apagar
-                }}
+                iconProps={{ iconName: 'EraseTool' }}
                 onClick={this.apagar}
                 allowDisabledFocus
                 disabled={!this.state.carregado || this.state.preenchendo}

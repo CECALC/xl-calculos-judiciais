@@ -1,3 +1,4 @@
+import React from 'react'
 import { mergeStyles, Icon } from '@fluentui/react'
 import logoUrl from '../assets/logo-completo-150.png'
 
