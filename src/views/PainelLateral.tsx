@@ -94,7 +94,7 @@ const onRenderFooterContent = (): JSX.Element => {
   return (
     <div className={classNames.copyright}>
       <span>© {new Date().getFullYear()} CECALC</span>
-      <span>adm-sp-cecalc@trf3.jus.br</span>
+      <span>admsp-cecalc@trf3.jus.br</span>
     </div>
   )
 }
