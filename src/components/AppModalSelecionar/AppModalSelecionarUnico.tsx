@@ -9,7 +9,7 @@ import {
   IChoiceGroupOption 
 } from '@fluentui/react'
 import AppModalSelecionarVazio from './AppModalSelecionarVazio'
-import { tipoFuncao } from '@cecalc/utils'
+import { tipoFuncao } from '@cecalc/utils/dist/utils'
 
 const dialogStyles = {
   isBlocking: false,

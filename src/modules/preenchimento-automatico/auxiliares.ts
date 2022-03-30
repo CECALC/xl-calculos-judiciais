@@ -1,5 +1,5 @@
-import { IOpcao } from '@cecalc/analisador-de-texto'
-import { formatoSnakeCase } from '@cecalc/utils'
+import { IOpcao } from './tipos'
+import { formatoSnakeCase } from '@cecalc/utils/dist/utils'
 import {
   definirValorDoIntervalo as preencherIntervalo,
   obterItensNomeados,

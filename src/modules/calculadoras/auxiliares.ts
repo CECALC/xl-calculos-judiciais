@@ -7,7 +7,7 @@ import {
   FORMATO_DATA,
   METODO_DIAS_360,
   TIPO_DURACAO
-} from '@cecalc/utils'
+} from '@cecalc/utils/dist/utils'
 import { depurador } from '../../utils'
 
 export enum TIPO_OPERACAO {

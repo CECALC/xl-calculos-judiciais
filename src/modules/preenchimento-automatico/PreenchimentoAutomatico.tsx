@@ -6,13 +6,14 @@ import {
   PrimaryButton, 
   IChoiceGroupOption
 } from '@fluentui/react'
-import { AnalisadorDeTexto, IOpcao } from '@cecalc/analisador-de-texto'
-import { debounce } from '@cecalc/utils'
+import { analisar } from '@cecalc/analisador-de-texto/dist/analisador-de-texto'
+import { debounce } from '@cecalc/utils/dist/utils'
 import { AppCartao, AppModalSelecionarUnico } from '../../components'
 import { obterItensNomeados } from '../../services'
 import { depurador } from '../../utils'
 import CaixaDeTexto from './CaixaDeTexto'
 import { preencherIntervalos } from './auxiliares'
+import { IOpcao } from './tipos'
 
 const stackTokens: IStackTokens = { childrenGap: 40 }
 
@@ -22,7 +23,7 @@ interface IState {
   preenchendo: boolean
   titulo: string
   descricao: string[][]
-  analisador: AnalisadorDeTexto | null
+  analisador: ReturnType<typeof analisar> | null
   opcoes: IOpcao[]
   texto: string
   modal: {
@@ -70,7 +71,7 @@ export default class PreenchimentoAutomatico extends Component {
   verificar(documento: string) {
     if (!documento.length) return
     this.setState({
-      analisador: new AnalisadorDeTexto(documento),
+      analisador: analisar(documento),
       carregado: true
     })
     if (this.state.analisador && this.state.analisador.identificado) {

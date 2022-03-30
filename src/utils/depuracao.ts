@@ -1,4 +1,4 @@
-import { Depurador } from '@cecalc/utils'
+import { Depurador } from '@cecalc/utils/dist/utils'
 
 const modoDesenvolvimento = process.env.NODE_ENV !== 'production'
 

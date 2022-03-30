@@ -1,6 +1,6 @@
 import React from 'react'
 import { DatePicker, IDatePickerStrings } from '@fluentui/react'
-import { CData, converterStringEmData, tipoData } from '@cecalc/utils'
+import { CData, converterStringEmData, tipoData } from '@cecalc/utils/dist/utils'
 
 const datePickerStrings: IDatePickerStrings = {
   invalidInputErrorMessage: 'Data inválida',
@@ -55,7 +55,7 @@ export default function AppDataInput({ rotulo, valor, onChange }: IProps) {
 
   const converterEmData = (s: string) => {
     try {
-      return converterStringEmData(s, 'pt-BR')
+      return converterStringEmData(s)
     } catch (e) {
       return null
     }

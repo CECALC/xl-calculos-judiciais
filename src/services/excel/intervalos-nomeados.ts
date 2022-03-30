@@ -1,4 +1,4 @@
-import { tipoString } from '@cecalc/utils'
+import { tipoString } from '@cecalc/utils/dist/utils'
 import { depurador } from '../../utils'
 import { armazenamento } from '../armazenamento'
 import { TValorExcel, TFormulaExcel } from './comuns'
