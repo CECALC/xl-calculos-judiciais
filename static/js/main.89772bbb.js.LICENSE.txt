@@ -4,18 +4,6 @@ object-assign
 @license MIT
 */
 
-/*!
- * @cecalc/analisador-de-texto v2.0.1
- * (c) Caio Moysés de Lima
- * Released under the MIT License.
- */
-
-/*!
- * @cecalc/utils v2.2.0
- * (c) Caio Moysés de Lima
- * Released under the MIT License.
- */
-
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
 
