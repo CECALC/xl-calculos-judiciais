@@ -1,4 +1,4 @@
-import { tipoData, tipoNumero } from '@cecalc/utils/dist/utils'
+import { tipoData, tipoNumero } from '@cecalc/utils'
 import { TValorExcel } from './comuns'
 
 export function converterParaExcel(valor: TValorExcel) {

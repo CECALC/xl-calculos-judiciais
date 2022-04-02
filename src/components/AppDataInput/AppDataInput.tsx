@@ -1,6 +1,6 @@
 import React from 'react'
 import { DatePicker, IDatePickerStrings } from '@fluentui/react'
-import { CData, converterStringEmData, tipoData } from '@cecalc/utils/dist/utils'
+import { CData, converterStringEmData, tipoData } from '@cecalc/utils'
 
 const datePickerStrings: IDatePickerStrings = {
   invalidInputErrorMessage: 'Data inválida',

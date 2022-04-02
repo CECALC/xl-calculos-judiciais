@@ -6,14 +6,13 @@ import {
   PrimaryButton, 
   IChoiceGroupOption
 } from '@fluentui/react'
-import { analisar } from '@cecalc/analisador-de-texto/dist/analisador-de-texto'
-import { debounce } from '@cecalc/utils/dist/utils'
+import { AnalisadorDeTexto, IOpcaoAnalisador } from '@cecalc/analisador-de-texto'
+import { debounce } from '@cecalc/utils'
 import { AppCartao, AppModalSelecionarUnico } from '../../components'
 import { obterItensNomeados } from '../../services'
 import { depurador } from '../../utils'
 import CaixaDeTexto from './CaixaDeTexto'
 import { preencherIntervalos } from './auxiliares'
-import { IOpcao } from './tipos'
 
 const stackTokens: IStackTokens = { childrenGap: 40 }
 
@@ -23,8 +22,8 @@ interface IState {
   preenchendo: boolean
   titulo: string
   descricao: string[][]
-  analisador: ReturnType<typeof analisar> | null
-  opcoes: IOpcao[]
+  analisador: AnalisadorDeTexto | null
+  opcoes: IOpcaoAnalisador[]
   texto: string
   modal: {
     titulo: string
@@ -71,7 +70,7 @@ export default class PreenchimentoAutomatico extends Component {
   verificar(documento: string) {
     if (!documento.length) return
     this.setState({
-      analisador: analisar(documento),
+      analisador: new AnalisadorDeTexto(documento),
       carregado: true
     })
     if (this.state.analisador && this.state.analisador.identificado) {
@@ -97,7 +96,7 @@ export default class PreenchimentoAutomatico extends Component {
     const modal = { ...this.state.modal }
     modal.opcoes = opcoes.map(opcao => ({
       key: opcao.nome,
-      text: opcao.nome + (opcao.sobreposicao ? ' (sobrepor)' : '')
+      text: opcao.nome
     }))
     modal.abrir = true
     this.setState({

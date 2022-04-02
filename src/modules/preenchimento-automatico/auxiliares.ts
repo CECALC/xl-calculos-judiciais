@@ -1,5 +1,5 @@
-import { IOpcao } from './tipos'
-import { formatoSnakeCase } from '@cecalc/utils/dist/utils'
+import { IOpcaoAnalisador } from '@cecalc/analisador-de-texto'
+import { formatoSnakeCase } from '@cecalc/utils'
 import {
   definirValorDoIntervalo as preencherIntervalo,
   obterItensNomeados,
@@ -8,7 +8,7 @@ import {
 } from '../../services'
 import { depurador } from '../../utils'
 
-export async function preencherIntervalos(nomeDocumento: string, opcao: IOpcao) {
+export async function preencherIntervalos(nomeDocumento: string, opcao: IOpcaoAnalisador) {
   opcao.parametros.forEach(async parametro => {
     const nomePlanilha = formatoSnakeCase(nomeDocumento).toUpperCase()
     const referencia = Array.isArray(parametro.intervalo)

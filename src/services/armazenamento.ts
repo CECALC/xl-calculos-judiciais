@@ -1,6 +1,6 @@
-import { depurador } from '../utils'
 import { compress, decompress } from 'lz-string'
-import { tipoObjeto } from '@cecalc/utils/dist/utils'
+import { tipoObjeto } from '@cecalc/utils'
+import { depurador } from '../utils'
 import { IArmazenamento } from './excel'
 
 // baseado em: https://github.com/mesmerised/persistme

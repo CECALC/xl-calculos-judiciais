@@ -9,9 +9,9 @@ import {
   ComboBox, 
   IComboBoxStyles 
 } from '@fluentui/react'
+import { CData, METODO_DIAS_360 } from '@cecalc/utils'
 import { AppDataInput } from '../../components'
 import { definirValorDaSelecao, TValorExcel } from '../../services'
-import { CData, METODO_DIAS_360 } from '@cecalc/utils/dist/utils'
 import { calcularIntervalo } from './auxiliares'
 
 const stackTokens: IStackTokens = { childrenGap: 10 }

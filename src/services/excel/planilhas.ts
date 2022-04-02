@@ -1,4 +1,4 @@
-import { tipoString } from '@cecalc/utils/dist/utils'
+import { tipoString } from '@cecalc/utils'
 
 export function obterOuCriarPlanilha(nome?: string): Promise<Excel.Worksheet> {
   return new Promise((resolve, reject) => {

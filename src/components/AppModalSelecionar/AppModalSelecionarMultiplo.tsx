@@ -11,7 +11,7 @@ import {
   IStackTokens,
   Stack 
 } from '@fluentui/react'
-import { tipoFuncao } from '@cecalc/utils/dist/utils'
+import { tipoFuncao } from '@cecalc/utils'
 import AppModalSelecionarVazio from './AppModalSelecionarVazio'
 
 const dialogStyles = {

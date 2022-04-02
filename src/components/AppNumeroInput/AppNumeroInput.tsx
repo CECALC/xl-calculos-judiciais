@@ -1,6 +1,6 @@
 import React, { SyntheticEvent } from 'react'
 import { Position, SpinButton } from '@fluentui/react'
-import { valorNumerico } from '@cecalc/utils/dist/utils'
+import { valorNumerico } from '@cecalc/utils'
 
 interface IProps {
   rotulo: string

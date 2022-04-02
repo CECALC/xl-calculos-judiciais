@@ -1,5 +1,5 @@
 import { IChoiceGroupOption } from '@fluentui/react'
-import { humanizar } from '@cecalc/utils/dist/utils'
+import { humanizar } from '@cecalc/utils'
 import { armazenamento } from './armazenamento'
 import { obterItensDisponiveisConfig, PREFIXO } from './excel'
 
