@@ -1,6 +1,6 @@
 # @cecalc/xl-calculos-judiciais
 
-Este é um suplemento Excel criado pela CECAL (Central de Cálculos da Justiça Federal de São Paulo) para auxiliar na realização de cálculos judiciais.
+Este é um suplemento Excel criado pela CECALC (Central de Cálculos da Justiça Federal de São Paulo) para auxiliar na realização de cálculos judiciais.
 
 O suplemento foi escrito em `React`, utilizando a ferramenta CLI [Create React App](https://github.com/facebook/create-react-app) com o template `Fluent UI` criado pela _Microsoft_.
 
