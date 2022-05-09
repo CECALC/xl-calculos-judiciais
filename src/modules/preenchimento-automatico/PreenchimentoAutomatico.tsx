@@ -9,7 +9,7 @@ import {
 import { AnalisadorDeTexto, IOpcaoAnalisador } from '@cecalc/analisador-de-texto'
 import { debounce } from '@cecalc/utils'
 import { AppCartao, AppModalSelecionarUnico } from '../../components'
-import { obterItensNomeados } from '../../services'
+import { nomeSemPrefixos, obterItensNomeados } from '../../services'
 import { depurador } from '../../utils'
 import CaixaDeTexto from './CaixaDeTexto'
 import { preencherIntervalos } from './auxiliares'
@@ -91,7 +91,7 @@ export default class PreenchimentoAutomatico extends Component {
   async selecionar() {
     if (!this.state.analisador) return
     this.setState({ preenchendo: true })
-    const intervalos = (await obterItensNomeados()).map(item => item.name)
+    const intervalos = (await obterItensNomeados()).map(item => nomeSemPrefixos(item.name))
     const opcoes = this.state.analisador.obterOpcoes(intervalos)
     const modal = { ...this.state.modal }
     modal.opcoes = opcoes.map(opcao => ({

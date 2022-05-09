@@ -1,5 +1,5 @@
 import { TValorExcel } from './comuns'
-import { converterParaExcel } from './valores-e-formatos'
+import { converterValorParaExcel } from './valores-e-formatos'
 
 export async function definirValorDaSelecao(valores: TValorExcel[][], formatos: string[][]) {
   await Excel.run(async context => {
@@ -11,7 +11,7 @@ export async function definirValorDaSelecao(valores: TValorExcel[][], formatos: 
       .getCell(0, 0)
       .getResizedRange(deltaLinhas, deltaColunas)
 
-    intervalo.values = valores.map(linha => linha.map(converterParaExcel))
+    intervalo.values = valores.map(linha => linha.map(converterValorParaExcel))
     intervalo.numberFormat = formatos
 
     await context.sync()

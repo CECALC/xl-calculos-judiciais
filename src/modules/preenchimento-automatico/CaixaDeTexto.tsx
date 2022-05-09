@@ -1,20 +1,30 @@
 import React, { ChangeEvent } from 'react'
 import { mergeStyles } from '@fluentui/react'
 
-const classeCaixaDeTexto = mergeStyles({
-  width: '93%',
+const classeContainer = mergeStyles({
+  width: '100%',
   height: '200px',
-  overflowY: 'auto',
-  overflowX: 'hidden',
-  resize: 'none',
-  boxShadow: 'none',
-  outline: 'none',
-  padding: '8px',
   marginBottom: '16px',
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center'
+})
+
+const classeCaixaDeTexto = mergeStyles({
+  width: '90%',
+  height: '90%',
+  overflowY: 'auto',
+  overflowX: 'hidden',
+  resize: 'none',
+  boxShadow: 'none',
+  outline: 'none',
+  border: '1px solid #8a8886',
+  padding: '8px'
+})
+
+const classeDescricao = mergeStyles({
+  fontSize: '0.7rem'
 })
 
 interface IProps {
@@ -30,9 +40,9 @@ export default function CaixaDeTexto({ carregado, valor, descricao, onChange }: 
   }
 
   return carregado ? (
-    <div className={classeCaixaDeTexto}>
+    <div className={classeContainer}>
       {descricao.map((linha, indice) => (
-        <div key={indice}>
+        <div key={indice} className={classeDescricao}>
           <span>
             <strong>{linha[0]}&nbsp;</strong>
           </span>
@@ -41,11 +51,13 @@ export default function CaixaDeTexto({ carregado, valor, descricao, onChange }: 
       ))}
     </div>
   ) : (
-    <textarea
-      value={valor}
-      placeholder="Cole o texto aqui..."
-      className={classeCaixaDeTexto}
-      onChange={atualizar}
-    ></textarea>
+    <div className={classeContainer}>
+      <textarea
+        value={valor}
+        placeholder="Cole o texto aqui..."
+        className={classeCaixaDeTexto}
+        onChange={atualizar}
+      ></textarea>
+    </div>
   )
 }

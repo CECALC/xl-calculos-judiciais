@@ -3,8 +3,8 @@ import { humanizar } from '@cecalc/utils'
 import { armazenamento } from './armazenamento'
 import { obterItensDisponiveisConfig, PREFIXO } from './excel'
 
-const prefixo = new RegExp(`^${PREFIXO.CONFIG}`)
-const prefixoFormula = new RegExp(`^${PREFIXO.CONFIG_FORMULA}`)
+const prefixo = new RegExp(`^${PREFIXO.PESSOAL}`)
+const prefixoFormula = new RegExp(`^${PREFIXO.PESSOAL_FORMULA}`)
 
 function ordenarOpcoes(a: IChoiceGroupOption, b: IChoiceGroupOption): 0 | 1 | -1 {
   const la = a.text.toLowerCase()
