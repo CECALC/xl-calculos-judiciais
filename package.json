@@ -1,6 +1,6 @@
 {
   "name": "xl-calculos-judiciais",
-  "version": "0.3.0-beta",
+  "version": "0.3.0",
   "private": true,
   "dependencies": {
     "@cecalc/analisador-de-texto": "^4.0.0",
