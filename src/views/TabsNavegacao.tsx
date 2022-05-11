@@ -1,11 +1,11 @@
-import React from 'react'
-import { mergeStyles, Pivot, PivotItem, Stack, IStackTokens } from '@fluentui/react'
+import React, { useState } from 'react'
+import { mergeStyles, Pivot, PivotItem, Stack, IStackTokens, MessageBar, MessageBarType } from '@fluentui/react'
 import {
   AreaDeTransferencia,
   CalculadorasPrevidenciarias,
   ConfiguracoesPessoais,
   PreenchimentoAutomatico,
-  // AtualizarIndices, // aguardando implementação webservice de índices
+  AtualizarIndices,
   EditarConfiguracoes
 } from '../modules'
 
@@ -18,7 +18,40 @@ const stackItemStyles = mergeStyles({
   width: '100%'
 })
 
+interface IStatusAtualizacao {
+  mostrar: boolean
+  mensagem: string
+  tipo: 'erro' | 'sucesso'
+}
+
 export default function BarraNevegacao() {
+  const [statusAtualizacao, mudarStatusAtualizacao] = useState<IStatusAtualizacao>({ mostrar: false, mensagem: '', tipo: 'erro' })
+
+  const fechar = () => {
+    mudarStatusAtualizacao(prev => ({
+      ...prev,
+      mostrar: false
+    }))
+  }
+
+  const aoConcluirAtualizacao = () => {
+    mudarStatusAtualizacao({
+      mostrar: true, 
+      mensagem: 'Atualização concluída com sucesso',
+      tipo: 'sucesso'
+    })
+    setTimeout(() => fechar(), 3000)
+  }
+
+  const aoFalharAtualizacao = () => {
+    mudarStatusAtualizacao({
+      mostrar: true, 
+      mensagem: 'Falha na atualização de índices',
+      tipo: 'erro'
+    })
+    setTimeout(() => fechar(), 3000)
+  }
+
   return (
     <Pivot
       aria-label="Barra de Navegação"
@@ -51,10 +84,20 @@ export default function BarraNevegacao() {
         </Stack>
       </PivotItem>
       <PivotItem headerText="Avançado" itemIcon="Settings">
+        {
+          statusAtualizacao.mostrar && <MessageBar
+            delayedRender={false}
+            messageBarType={statusAtualizacao.tipo === 'erro' ? MessageBarType.error : MessageBarType.success}
+            onDismiss={fechar}
+            dismissButtonAriaLabel="fechar"
+          >
+            {statusAtualizacao.mensagem}
+          </MessageBar>
+        }
         <Stack horizontalAlign="center" tokens={verticalGapStackTokens}>
-          {/* <Stack.Item className={stackItemStyles}>
-            <AtualizarIndices />
-          </Stack.Item> */}
+          <Stack.Item className={stackItemStyles}>
+            <AtualizarIndices aoConcluir={aoConcluirAtualizacao} aoFalhar={aoFalharAtualizacao} />
+          </Stack.Item>
           <Stack.Item className={stackItemStyles}>
             <EditarConfiguracoes />
           </Stack.Item>

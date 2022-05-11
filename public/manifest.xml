@@ -6,7 +6,7 @@
           xmlns:ov="http://schemas.microsoft.com/office/taskpaneappversionoverrides"
           xsi:type="TaskPaneApp">
   <Id>4c952bf1-e32f-4f9c-ba73-642d733d9768</Id>
-  <Version>1.0.0</Version>
+  <Version>0.2.0-beta</Version>
   <ProviderName>CECALC</ProviderName>
   <DefaultLocale>pt-br</DefaultLocale>
   <DisplayName DefaultValue="Cálculos Judiciais" />

@@ -5,12 +5,17 @@ import { converterValorParaExcel, gerarTabelaDeFormatos } from './valores-e-form
 export async function definirValorDoIntervalo(
   valores: TValorExcel[][],
   referencia?: string,
-  nomePlanilha?: string
+  nomePlanilha?: string,
+  limparPlanilha = false,
+  formatoNumero?: string,
+  formatoData?: string
 ) {
   if (!Array.isArray(valores) || !Array.isArray(valores[0])) return
   const planilha = await obterOuCriarPlanilha(nomePlanilha)
 
   const context = planilha.context
+  if (limparPlanilha) planilha.getUsedRange().clear()
+  context.sync()
 
   const deltaLinhas = valores.length - 1
   const deltaColunas = valores[0].length - 1
@@ -31,7 +36,7 @@ export async function definirValorDoIntervalo(
   }
 
   intervalo.values = valores.map(linha => linha.map(converterValorParaExcel))
-  const formatos = gerarTabelaDeFormatos(valores)
+  const formatos = gerarTabelaDeFormatos(valores, formatoNumero, formatoData)
   if (Array.isArray(formatos) && Array.isArray(formatos[0])) intervalo.numberFormat = formatos
 
   planilha.activate()

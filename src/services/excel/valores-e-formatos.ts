@@ -13,11 +13,11 @@ export function converterValorSerialExcelParaData(valorSerialExcel: number) {
   return new Date(0, 0, valorSerialExcel - 1)
 }
 
-export function gerarTabelaDeFormatos(valores: TValorExcel[][]): string[][] {
+export function gerarTabelaDeFormatos(valores: TValorExcel[][], formatoNumero = '#,##0.00;(#,##0.00)', formatoData = 'dd/MM/yyyy'): string[][] {
   return valores.map(linha => {
     return linha.map(celula => {
-      if (tipoNumero(celula)) return '#,##0.00;(#,##0.00)'
-      if (tipoData(celula)) return 'dd/MM/yyyy'
+      if (tipoNumero(celula)) return formatoNumero
+      if (tipoData(celula)) return formatoData
       return ''
     })
   })

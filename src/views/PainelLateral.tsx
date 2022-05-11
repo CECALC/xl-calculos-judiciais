@@ -10,6 +10,7 @@ import {
   FocusZone, 
   FocusZoneDirection
 } from '@fluentui/react'
+import pkg from '../../package.json'
 
 interface IProps {
   abrir: boolean
@@ -92,9 +93,16 @@ const onRenderCell = (item?: IItem): JSX.Element => {
 
 const onRenderFooterContent = (): JSX.Element => {
   return (
-    <div className={classNames.copyright}>
-      <span>© {new Date().getFullYear()} CECALC</span>
-      <span>admsp-cecalc@trf3.jus.br</span>
+    <div>
+      <div className={classNames.copyright}>
+        <span>© {new Date().getFullYear()} CECALC</span>
+        <span>
+          v-{pkg.version}
+        </span>
+      </div>
+      <div>
+        <span>admsp-cecalc@trf3.jus.br</span>
+      </div>
     </div>
   )
 }

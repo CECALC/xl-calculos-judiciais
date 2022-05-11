@@ -1,10 +1,10 @@
 {
   "name": "xl-calculos-judiciais",
-  "version": "1.0.0",
+  "version": "0.2.0-beta",
   "private": true,
   "dependencies": {
     "@cecalc/analisador-de-texto": "^4.0.0",
-    "@cecalc/utils": "^3.0.0",
+    "@cecalc/utils": "^3.0.1",
     "@fluentui/font-icons-mdl2": "^8.2.5",
     "@fluentui/react": "^8.62.3",
     "@testing-library/jest-dom": "^5.16.2",

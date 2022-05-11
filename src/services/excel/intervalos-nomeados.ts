@@ -27,6 +27,11 @@ export enum TIPO_PERSISTENCIA {
 
 export type TFiltro = string | RegExp
 
+export interface IDadosCriacaoItemNomeado {
+  nome: string
+  endereco: string  
+}
+
 export interface IIDadosItem {
   valores: TValorExcel[][]
   formulas: TFormulaExcel[][]
@@ -134,6 +139,33 @@ export const obterItensNomeados = (filtro?: TFiltro): Promise<Excel.NamedItem[]>
         await context.sync()
         const resultado = names.items.filter(selecionarItensNomeados(filtro))
         resolve(resultado)
+      })
+    } catch (e) {
+      reject(e)
+    }
+  })
+}
+
+export const criarItensNomeados = async (nomePlanilha: string, novosItens: IDadosCriacaoItemNomeado[]): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    try {
+      window.Excel.run(async context => {
+        const planilha = context.workbook.worksheets.getItem(nomePlanilha)
+        const names = context.workbook.names.load('items/name')
+        await context.sync()
+
+        novosItens.forEach(novoItem => {
+          const item = names.items.find(item => item.name === novoItem.nome)
+          if (item) {
+            item.formula = `=${nomePlanilha}!${novoItem.endereco}`
+          } else {
+            const intervalo = planilha.getRange(novoItem.endereco)
+            names.add(novoItem.nome, intervalo)
+          }
+        })
+        await context.sync()
+
+        return resolve()
       })
     } catch (e) {
       reject(e)
