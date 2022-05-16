@@ -1,6 +1,6 @@
 import { tipoData, tipoNumero, tipoString, validarData } from '@cecalc/utils'
 import { depurador } from '../../utils'
-import { armazenamento } from '../armazenamento'
+import { armazenamento, TDadosExcel, TDadosTransferencia, TIPO_PERSISTENCIA } from '../armazenamento'
 import { TValorExcel, TFormulaExcel } from './comuns'
 import { converterValorParaExcel, converterValorSerialExcelParaData, gerarTabelaDeFormatos } from './valores-e-formatos'
 
@@ -20,11 +20,6 @@ export enum DIRECAO {
   SOBREPOR
 }
 
-export enum TIPO_PERSISTENCIA {
-  CACHE,
-  CONFIG
-}
-
 export type TFiltro = string | RegExp
 
 export interface IDadosCriacaoItemNomeado {
@@ -32,13 +27,26 @@ export interface IDadosCriacaoItemNomeado {
   endereco: string  
 }
 
-export interface IIDadosItem {
+export interface IDadosItemNomeado {
   valores: TValorExcel[][]
+  valoresExibidos: string[][]
   formulas: TFormulaExcel[][]
+  formatos: string[][]
 }
 
-export interface IArmazenamento {
-  [key: string]: TValorExcel[][] | TFormulaExcel[][]
+export const obterNomePastaDeTrabalho = async (): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    try {
+      Excel.run(async context => {
+        const wb = context.workbook
+        wb.load('name')
+        await context.sync()
+        resolve(wb.name)
+      })
+    } catch (e) {
+      reject(e)
+    }
+  })
 }
 
 export const nomeSemPrefixos = (intervalo: string) => {
@@ -79,7 +87,7 @@ export const selecionarItensNomeados = (filtro?: TFiltro) => {
 export const obterNomesPorPrefixo = async (filtro?: TFiltro): Promise<string[]> => {
   return new Promise((resolve, reject) => {
     try {
-      window.Excel.run(async context => {
+      Excel.run(async context => {
         const names = context.workbook.names.load('items')
         await context.sync()
         const itens = names.items.filter(selecionarItensNomeados(filtro)).map(item => item.name)
@@ -92,23 +100,21 @@ export const obterNomesPorPrefixo = async (filtro?: TFiltro): Promise<string[]> 
   })
 }
 
-export const obterDadosDeItemNomeado = async (item: Excel.NamedItem): Promise<IIDadosItem> => {
-  const range = item.getRange().load(['values', 'formulasLocal'])
-  await item.context.sync()
-  const dados = {
-    valores: range.values,
-    formulas: range.formulasLocal
+export const obterDadosDeItemNomeado = async (item: Excel.NamedItem): Promise<IDadosItemNomeado | null> => {
+  try {
+    const range = item.getRange().load(['values', 'text', 'formulasLocal', 'numberFormat'])
+    await item.context.sync()
+    const dados = {
+      valores: range.values,
+      valoresExibidos: range.text,
+      formulas: range.formulasLocal,
+      formatos: range.numberFormat
+    }
+    depurador.inspecionar(`Dados do intervalo '${item.name}': `, dados)
+    return dados
+  } catch (e) {
+    return null
   }
-  depurador.inspecionar(`Dados do intervalo '${item.name}': `, dados)
-  return dados
-}
-
-export const obterValoresDeItemNomeado = async (item: Excel.NamedItem): Promise<TValorExcel[][]> => {
-  const range = item.getRange().load(['values'])
-  await item.context.sync()
-  const valores = range.values
-  depurador.inspecionar(`Valores do intervalo '${item.name}': `, valores)
-  return valores
 }
 
 export const obterItemNomeado = (nome: string): Promise<Excel.NamedItem | null> => {
@@ -130,7 +136,6 @@ export const obterItemNomeado = (nome: string): Promise<Excel.NamedItem | null> 
   })
 }
 
-
 export const obterItensNomeados = (filtro?: TFiltro): Promise<Excel.NamedItem[]> => {
   return new Promise((resolve, reject) => {
     try {
@@ -149,19 +154,18 @@ export const obterItensNomeados = (filtro?: TFiltro): Promise<Excel.NamedItem[]>
 export const criarItensNomeados = async (nomePlanilha: string, novosItens: IDadosCriacaoItemNomeado[]): Promise<void> => {
   return new Promise((resolve, reject) => {
     try {
-      window.Excel.run(async context => {
+      Excel.run(async context => {
         const planilha = context.workbook.worksheets.getItem(nomePlanilha)
         const names = context.workbook.names.load('items/name')
         await context.sync()
 
         novosItens.forEach(novoItem => {
-          const item = names.items.find(item => item.name === novoItem.nome)
-          if (item) {
-            item.formula = `=${nomePlanilha}!${novoItem.endereco}`
-          } else {
-            const intervalo = planilha.getRange(novoItem.endereco)
-            names.add(novoItem.nome, intervalo)
-          }
+          const item = names.items.find(item => item.name.toLowerCase() === novoItem.nome.toLowerCase())
+          
+          if (item) item.delete()
+
+          const intervalo = planilha.getRange(novoItem.endereco)
+          names.add(novoItem.nome, intervalo)
         })
         await context.sync()
 
@@ -186,14 +190,15 @@ export const obterItensDisponiveisConfig = async () => {
 export const obterDadosParaArmazenamento = async (
   tipo: TIPO_PERSISTENCIA,
   nomes?: string[]
-): Promise<IArmazenamento> => {
+): Promise<TDadosExcel> => {
   const cache = tipo === TIPO_PERSISTENCIA.CACHE
   const itens = cache ? await obterItensDisponiveisCache() : await obterItensDisponiveisConfig()
   const filtrados = itens.filter(item => !Array.isArray(nomes) || nomes.includes(item.name))
-  const dadosParaGravar = {} as IArmazenamento
+  const dadosParaGravar = {} as TDadosExcel
   for (let i = 0; i < filtrados.length; i++) {
     const item = filtrados[i]
     const dadosItem = await obterDadosDeItemNomeado(item)
+    if (!dadosItem) continue
     const temFormula =
       item.name.startsWith(PREFIXO.CACHE_FORMULA) || item.name.startsWith(PREFIXO.PESSOAL_FORMULA)
     dadosParaGravar[item.name] = temFormula ? dadosItem.formulas : dadosItem.valores
@@ -230,6 +235,7 @@ export const recuperarDados = async (tipo: TIPO_PERSISTENCIA, nomes?: string[]) 
   const disponiveis = itens.map(item => item.name)
   depurador.console.info('Intervalos na planilha: ', disponiveis)
   depurador.console.info(`Dados no ${cache ? 'cache' : 'padrões'}: `, dados)
+  if (!dados) return
   return new Promise(resolve => {
     Excel.run(async () => {
       for (let i = 0; i < itens.length; i++) {
@@ -249,6 +255,20 @@ export const recuperarDados = async (tipo: TIPO_PERSISTENCIA, nomes?: string[]) 
       resolve(undefined)
     })
   })
+}
+
+export const prepararTransferenciaParaWord = async () => {
+  const itens = await obterItensNomeados()
+  const dados = {} as TDadosTransferencia
+  for (let i = 0; i < itens.length; i++) {
+    const item = itens[i]
+    const dadosItem = await obterDadosDeItemNomeado(item)
+    if (!dadosItem) continue
+    dados[item.name] = dadosItem.valoresExibidos
+  }
+  const pastaDeTrabalho = await obterNomePastaDeTrabalho()
+  depurador.console.info('Preparando transferência para Word: ', dados)
+  return armazenamento.gravarDadosTransferencia(pastaDeTrabalho, dados)
 }
 
 export const preencherItemNomeado = async (valores: TValorExcel[][], referencia: string, deslocLinhas = 0, deslocColunas = 0) => {
@@ -272,10 +292,11 @@ export const preencherItemNomeado = async (valores: TValorExcel[][], referencia:
   })
 }
 
-export const obterValoresDaReferencia = async (referencia: string): Promise<TValorExcel[][]> => {
+export const obterValoresDaReferencia = async (referencia: string): Promise<TValorExcel[][] | null> => {
   const item = await obterItemNomeado(referencia)
-  if (item === null) return []
-  return await obterValoresDeItemNomeado(item)
+  if (item === null) return null
+  const dados = await obterDadosDeItemNomeado(item)
+  return dados ? dados.valores : null
 }
 
 export const obterLinhaCompetencia = async (referencia: string, competencia: Date): Promise<number> => {
@@ -305,8 +326,6 @@ export const obterProximaLinhaDisponivel = async (referencia: string): Promise<n
   if (!tipoString(referencia)) return -1
 
   const valores = await obterValoresDaReferencia(referencia)
-
-  console.log(valores)
 
   if (Array.isArray(valores) && valores.length && valores[0].length) {
     let livre = valores.length

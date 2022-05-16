@@ -4,64 +4,70 @@ import {
   Stack, 
   PrimaryButton
 } from '@fluentui/react'
-import { AppCartao } from '../../components'
+import { AppCartao, AppModalAviso, TTipoModal } from '../../components'
 import { depurador } from '../../utils'
-import { atualizarIndices } from '../../services/atualizacao-indices'
+import { atualizacaoIndices } from '../../services/atualizacao-indices'
 
 const stackTokens: IStackTokens = { childrenGap: 40 }
 
-interface IProps {
-  aoConcluir?: () => void
-  aoFalhar?: () => void
+interface IStatusAtualizacao {
+  mostrar: boolean
+  mensagem: string
+  tipo: TTipoModal
 }
 
-const endpoint = 'https://contadoria.herokuapp.com/api/indicesConsolidados/download'
-
-export default function AtualizarIndices({ aoFalhar, aoConcluir } : IProps) {
+export default function AtualizarIndices() {
   const [atualizando, mudarAtualizando] = useState<boolean>(false)
+  const [statusAtualizacao, mudarStatusAtualizacao] = useState<IStatusAtualizacao>({ mostrar: false, mensagem: '', tipo: 'sucesso' })
+
+  const fechar = () => {
+    mudarStatusAtualizacao({
+      mostrar: false,
+      mensagem: '',
+      tipo: 'sucesso'
+    })
+  }
 
   const atualizar = async () => {
-    let sucesso = false
     mudarAtualizando(true)
     depurador.info('atualizando...')
-    const request = new XMLHttpRequest()
-    request.onload = async () => {
-      sucesso = true
-      depurador.console.log(request.response.trim())
-      mudarAtualizando(false)
-      try {
-        await atualizarIndices(request.response.trim())
-        if (typeof aoConcluir === 'function') aoConcluir()
-      } catch (e) {
-        depurador.console.error(e)
-        if (typeof aoFalhar === 'function') aoFalhar()
-      }
+    try {
+      await atualizacaoIndices.atualizarPlanilha()
+      mudarStatusAtualizacao({
+        mostrar: true,
+        mensagem: 'Atualização concluída com sucesso',
+        tipo: 'sucesso'
+      })
+    } catch (e) {
+      mudarStatusAtualizacao({
+        mostrar: true,
+        mensagem: 'Falha na atualização de índices',
+        tipo: 'falha'
+      })
     }
-    request.onerror = () => {
-      mudarAtualizando(false)
-      if (typeof aoFalhar === 'function') aoFalhar()
-    }
-    request.open('GET', endpoint)
-    request.send()
-    setTimeout(() => {
-      if (sucesso) return
-      request.abort()
-      mudarAtualizando(false)
-      if (typeof aoFalhar === 'function') aoFalhar()
-    }, 10000)
+    mudarAtualizando(false)
   }
 
   return (
-    <AppCartao titulo="Atualizar Índices" icone="TableGroup" atualizando={atualizando}>
-      <Stack horizontal tokens={stackTokens} horizontalAlign="center">
-        <PrimaryButton
-          text="Atualizar"
-          iconProps={{ iconName: 'Sync' }}
-          onClick={atualizar}
-          allowDisabledFocus
-          disabled={atualizando}
-        />
-      </Stack>
-    </AppCartao>
+    <>
+      <AppCartao titulo="Atualizar Índices" icone="TableGroup" atualizando={atualizando}>
+        <Stack horizontal tokens={stackTokens} horizontalAlign="center">
+          <PrimaryButton
+            text="Atualizar"
+            iconProps={{ iconName: 'Sync' }}
+            onClick={atualizar}
+            allowDisabledFocus
+            disabled={atualizando}
+          />
+        </Stack>
+      </AppCartao>
+      <AppModalAviso
+        mostrar={statusAtualizacao.mostrar}
+        mensagem={statusAtualizacao.mensagem}
+        tipo={statusAtualizacao.tipo}
+        aoDispensar={fechar}
+      />
+
+    </>
   )
 }

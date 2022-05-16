@@ -37,7 +37,7 @@ const datePickerStrings: IDatePickerStrings = {
 
 interface IProps {
   rotulo: string
-  valor: Date
+  valor?: Date
   onChange: (novoValor: Date) => void
 }
 
@@ -50,7 +50,7 @@ export default function AppDataInput({ rotulo, valor, onChange }: IProps) {
 
   const formatarData = (data?: Date) => {
     if (!tipoData(data)) return ''
-    return data.toJSON().slice(0, 10).split('-').reverse().join('/')
+    return data.toLocaleDateString()
   }
 
   const converterEmData = (s: string) => {

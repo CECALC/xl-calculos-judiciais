@@ -33,7 +33,7 @@ const classeOculto = mergeStyles({
 
 const classevisivel = mergeStyles({
   visibility: 'visible',
-  marginBottom: -9
+  marginBottom: -8
 })
 
 

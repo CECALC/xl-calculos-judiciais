@@ -1,5 +1,6 @@
 import 'react-app-polyfill/ie11';
 import 'react-app-polyfill/stable'
+import './index.css'
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { App } from './App';
@@ -27,10 +28,10 @@ ReactDOM.render(
   document.getElementById('root')
 )
 
-Office.onReady(() => {
+Office.onReady(({ host, platform }) => {
   ReactDOM.render(
     <React.StrictMode>
-      <App />
+      <App host={host} platform={platform} />
     </React.StrictMode>,
     document.getElementById('root')
   )

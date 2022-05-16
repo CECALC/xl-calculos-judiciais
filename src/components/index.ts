@@ -1,4 +1,5 @@
 export * from './AppCartao'
+export * from './AppModalAviso'
 export * from './AppModalConfirmar'
 export * from './AppModalSelecionar'
 export * from './AppDataInput'

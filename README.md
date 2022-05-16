@@ -20,7 +20,13 @@ Atenção: a página de testes é executada com o protocolo `https`.<br>
 Desse modo, você deve instalar localmente o certificado e a chave criptográfica.<br> 
 Para fazer isso, basta executar uma vez, no terminal, o comando `npm run cert:install`.
 
-O comando também gera o manifesto em versão desenvolvimento para efetuar o _sideload_ no Excel.
+### `npm run manifest:dev`
+
+O comando gera o manifesto em versão desenvolvimento para efetuar o _sideload_ no Excel.
+
+### `npm run manifest:prod`
+
+O comando gera o manifesto em versão produção.
 
 ### `npm run build`
 
@@ -47,4 +53,4 @@ e a [documentação dos suplementos _Office_](https://docs.microsoft.com/pt-br/o
 
 # Contribuir
 
-Para contribuir voluntariamente com este projeto, entre em contato com admsp-cecal@trf3.jus.br.
+Para contribuir voluntariamente com este projeto, entre em contato com admsp-cecalc@trf3.jus.br.

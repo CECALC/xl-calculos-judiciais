@@ -31,6 +31,7 @@
   <AppDomains>
     <AppDomain>localhost</AppDomain>
     <AppDomain>jfsp.jus.br</AppDomain>
+    <AppDomain>jfms.jus.br</AppDomain>
     <AppDomain>trf3.jus.br</AppDomain>
     <AppDomain>cecalc.github.io</AppDomain>
     <AppDomain>github.com</AppDomain>
@@ -40,6 +41,7 @@
   <!--Begin TaskPane Mode integration. This section is used if there are no VersionOverrides or if the Office client version does not support add-in commands. -->
   <Hosts>
     <Host Name="Workbook" />
+    <Host Name="Document" />
   </Hosts>
   <DefaultSettings>
     <SourceLocation DefaultValue="{{base}}/index.html" />
@@ -57,6 +59,64 @@
       <!-- Excel host is Workbook, Word host is Document, and PowerPoint host is Presentation. -->
       <!-- Make sure the hosts you override match the hosts declared in the top section of the manifest. -->
       <Host xsi:type="Workbook">
+        <!-- Form factor. Currently only DesktopFormFactor is supported. -->
+        <DesktopFormFactor>
+          <!--"This code enables a customizable message to be displayed when the add-in is loaded successfully upon individual install."-->
+          <GetStarted>
+            <!-- Title of the Getting Started callout. resid points to a ShortString resource -->
+            <Title resid="GetStarted.Title"/>
+
+            <!-- Description of the Getting Started callout. resid points to a LongString resource -->
+            <Description resid="GetStarted.Description"/>
+
+            <!-- Point to a url resource which details how the add-in should be used. -->
+            <LearnMoreUrl resid="GetStarted.LearnMoreUrl"/>
+          </GetStarted>
+
+          <!-- PrimaryCommandSurface is the main Office Ribbon. -->
+          <ExtensionPoint xsi:type="PrimaryCommandSurface">
+            <!-- Use OfficeTab to extend an existing Tab. Use CustomTab to create a new tab. -->
+            <OfficeTab id="TabHome">
+              <!-- Ensure you provide a unique id for the group. Recommendation for any IDs is to namespace using your company name. -->
+              <Group id="CommandsGroup">
+                <!-- Label for your group. resid must point to a ShortString resource. -->
+                <Label resid="CommandsGroup.Label" />
+                <!-- Icons. Required sizes 16,32,80, optional 20, 24, 40, 48, 64. Strongly recommended to provide all sizes for great UX. -->
+                <!-- Use PNG icons. All URLs on the resources section must use HTTPS. -->
+                <Icon>
+                  <bt:Image size="16" resid="Icon.32x32" />
+                  <bt:Image size="32" resid="Icon.32x32" />
+                  <bt:Image size="80" resid="Icon.32x32" />
+                </Icon>
+
+                <!-- Control. It can be of type "Button" or "Menu". -->
+                <Control xsi:type="Button" id="TaskpaneButton">
+                  <Label resid="TaskpaneButton.Label" />
+                  <Supertip>
+                    <!-- ToolTip title. resid must point to a ShortString resource. -->
+                    <Title resid="TaskpaneButton.Label" />
+                    <!-- ToolTip description. resid must point to a LongString resource. -->
+                    <Description resid="TaskpaneButton.Tooltip" />
+                  </Supertip>
+                  <Icon>
+                    <bt:Image size="16" resid="Icon.32x32" />
+                    <bt:Image size="32" resid="Icon.32x32" />
+                    <bt:Image size="80" resid="Icon.32x32" />
+                  </Icon>
+
+                  <!-- This is what happens when the command is triggered (E.g. click on the Ribbon). Supported actions are ExecuteFunction or ShowTaskpane. -->
+                  <Action xsi:type="ShowTaskpane">
+                    <TaskpaneId>ButtonId1</TaskpaneId>
+                    <!-- Provide a url resource id for the location that will be displayed on the task pane. -->
+                    <SourceLocation resid="Taskpane.Url" />
+                  </Action>
+                </Control>
+              </Group>
+            </OfficeTab>
+          </ExtensionPoint>
+        </DesktopFormFactor>
+      </Host>
+      <Host xsi:type="Document">
         <!-- Form factor. Currently only DesktopFormFactor is supported. -->
         <DesktopFormFactor>
           <!--"This code enables a customizable message to be displayed when the add-in is loaded successfully upon individual install."-->

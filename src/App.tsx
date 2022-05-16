@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { mergeStyles } from '@fluentui/react';
-import './App.css';
-import { BarraPrincipal, ErrorBoundary, TabsNavegacao, PainelLateral } from './views'
+import { BarraPrincipal, ErrorBoundary, TabsNavegacao, PainelLateral, TelaWord } from './views'
+import { depurador } from './utils';
 
 const classeApp = mergeStyles({
   textAlign: 'center',
@@ -9,8 +9,15 @@ const classeApp = mergeStyles({
   height: '100%'
 })
 
-export const App: React.FunctionComponent = () => {
+interface IProps {
+  host: Office.HostType
+  platform: Office.PlatformType
+}
+
+export const App = ({ host, platform }: IProps) => {
   const [painelAberto, mudarStatusPainel] = useState<boolean>(false)
+  depurador.info(host && host.toString())
+  depurador.info(platform && platform.toString())
 
   const fecharPainel = () => mudarStatusPainel(false)
   const abrirPainel = () => mudarStatusPainel(true)
@@ -20,7 +27,14 @@ export const App: React.FunctionComponent = () => {
       <div className={classeApp}>
         <BarraPrincipal onPanelOpen={abrirPainel} />
         <PainelLateral abrir={painelAberto} onDismiss={fecharPainel} />
-        <TabsNavegacao />
+        {
+          host === Office.HostType.Excel
+          ? 
+          <TabsNavegacao /> 
+          : 
+          <TelaWord />
+        }
+        
       </div>
     </ErrorBoundary>
   )

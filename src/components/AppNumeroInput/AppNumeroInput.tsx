@@ -4,7 +4,7 @@ import { valorNumerico } from '@cecalc/utils'
 
 interface IProps {
   rotulo: string
-  valor: number
+  valor?: number
   onChange: (novoValor: number) => void
 }
 
@@ -18,7 +18,7 @@ export default function AppNumeroInput({ rotulo, valor, onChange }: IProps) {
     <SpinButton
       label={rotulo}
       labelPosition={Position.top}
-      value={String(valor)}
+      value={String(valor || 0)}
       min={0}
       step={1}
       incrementButtonAriaLabel="Incrementar valor"

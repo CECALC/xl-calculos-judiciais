@@ -2,46 +2,41 @@ import React, { useState } from 'react'
 import { 
   IStackTokens, 
   Stack, 
-  DefaultButton, 
-  PrimaryButton 
+  PrimaryButton, 
+  DefaultButton
 } from '@fluentui/react'
 import { AppCartao } from '../../components'
-import { persistirDados, recuperarDados, TIPO_PERSISTENCIA } from '../../services'
+import { armazenamento, prepararTransferenciaParaWord } from '../../services'
 
 const stackTokens: IStackTokens = { childrenGap: 40 }
 
-export default function AreaDeTransferencia() {
+export default function CopiarParaWord() {
   const [copiando, mudarCopiando] = useState<boolean>(false)
-  const [colando, mudarColando] = useState<boolean>(false)
 
   const copiar = async () => {
     mudarCopiando(true)
-    await persistirDados(TIPO_PERSISTENCIA.CACHE)
+    await prepararTransferenciaParaWord()
     mudarCopiando(false)
   }
 
-  const colar = async () => {
-    mudarColando(true)
-    await recuperarDados(TIPO_PERSISTENCIA.CACHE)
-    mudarColando(false)
-  }
+  const apagar = () => armazenamento.limparDadosTransferencia()
 
   return (
-    <AppCartao titulo="Área de Transferência" icone="ClipboardSolid" atualizando={copiando || colando}>
+    <AppCartao titulo="Copiar para Word" icone="WordDocument" atualizando={copiando}>
       <Stack horizontal tokens={stackTokens} horizontalAlign="center">
         <PrimaryButton
           text="Copiar"
           iconProps={{ iconName: 'Copy' }}
           onClick={copiar}
           allowDisabledFocus
-          disabled={copiando || colando}
+          disabled={copiando}
         />
         <DefaultButton
-          text="Colar"
-          iconProps={{ iconName: 'Paste' }}
-          onClick={colar}
+          text="Apagar"
+          iconProps={{ iconName: 'EraseTool' }}
+          onClick={apagar}
           allowDisabledFocus
-          disabled={colando || copiando}
+          disabled={copiando}
         />
       </Stack>
     </AppCartao>
