@@ -1,6 +1,5 @@
 import React, { SyntheticEvent } from 'react'
-import { Position, SpinButton } from '@fluentui/react'
-import { valorNumerico } from '@cecalc/utils'
+import { TextField } from '@fluentui/react'
 
 interface IProps {
   rotulo: string
@@ -10,21 +9,17 @@ interface IProps {
 
 export default function AppNumeroInput({ rotulo, valor, onChange }: IProps) {
   const atualizar = (event: SyntheticEvent<HTMLElement, Event>, novoValor?: string) => {
-    if (!valorNumerico(novoValor)) return
-    onChange(Number(novoValor))
+    const val = novoValor?.replace(/[^.0-9]+/g, '')
+    console.log(val)
+    onChange(Number(val))
   }
 
   const selecionar = (e: any) => console.log(e.target.select())
 
   return (
-    <SpinButton
+    <TextField
       label={rotulo}
-      labelPosition={Position.top}
-      value={String(valor || 0)}
-      min={0}
-      step={1}
-      incrementButtonAriaLabel="Incrementar valor"
-      decrementButtonAriaLabel="Decrementar valor"
+      value={String(valor)}
       style={{ textAlign: 'right' }}
       onFocus={selecionar}
       onChange={atualizar}

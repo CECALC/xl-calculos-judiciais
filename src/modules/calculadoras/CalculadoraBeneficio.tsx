@@ -1,59 +1,74 @@
 import React, { useState } from 'react'
 import { 
   mergeStyles,
-  IconButton,
   IStackStyles, 
   IStackTokens, 
   Stack,
   Checkbox,
   PrimaryButton,
-  DefaultButton
+  DefaultButton,
+  Overlay,
+  Spinner,
+  SpinnerSize,
+  Label,
+  FontSizes
  } from '@fluentui/react'
-import { AppDataInput, AppNumeroInput } from '../../components'
+import { AppDataInput, AppModalAviso, AppNumeroInput, TTipoModal } from '../../components'
 import { calcularBeneficio, IDadosBeneficio, IParametrosCalculo } from './auxiliares'
 import { depurador } from '../../utils'
+import ModalBeneficio from './ModalBeneficio'
 
 const stackTokens: IStackTokens = { childrenGap: 10 }
 const stackStyles: Partial<IStackStyles> = { root: { padding: '12px 0 ' } }
 
-const classeTituloSessaoPrimeira = mergeStyles({
-  fontWeight: 'bold',
-  width: '100%',
-  paddingTop: '16px'
-})
-
-const classeTituloSessao = mergeStyles({
+const classeSeparador = mergeStyles({
   fontWeight: 'bold',
   width: '100%',
   borderTop: '1px solid lightgray',
-  paddingTop: '16px'
+  paddingTop: '16px',
+  marginTop: '16px'
 })
+
+interface IStatusErro {
+  mostrar: boolean
+  mensagem: string
+  tipo: TTipoModal
+}
 
 export default function CalculadoraPrescricao() {
   const [originario, mudarOriginario] = useState<Partial<IDadosBeneficio>>({ dib: undefined, rmi: 0, percentualMinimo: 100 })
-  const [derivado, mudarDerivado] = useState<Partial<IDadosBeneficio>>({ dib: undefined, rmi: 0, percentualMinimo: 100 })
-  const [indiceReposicaoTeto, mudarIndiceReposicaoTeto] = useState<number>(1)
-  const [equivalenciaSalarial, mudarEquivalenciaSalarial] = useState<number>(1)
-  const [dataAtualizacao, mudarDataAtualizacao] = useState<Date>(new Date())
-  const [calcularAbono, mudarCalcularAbono] = useState<boolean>(true)
   const [abaixoMinimoOriginario, mudarAbaixoMinimoOriginario] = useState<boolean>(false)
-  const [abaixoMinimoDerivado, mudarAbaixoMinimoDerivado] = useState<boolean>(false)
+
+  const [parametros, mudarParametros] = useState<IParametrosCalculo>({ calcularAbono: true, dataAtualizacao: new Date(), indiceReposicaoTeto: 1, equivalenciaSalarial: 1 })
+
   const [temDerivado, mudarTemDerivado] = useState<boolean>(false)
+  const [derivado, mudarDerivado] = useState<Partial<IDadosBeneficio>>({ dib: undefined, rmi: 0, percentualMinimo: 100 })
+  const [abaixoMinimoDerivado, mudarAbaixoMinimoDerivado] = useState<boolean>(false)
+
+  const [statusErro, mudarStatusErro] = useState<IStatusErro>({ mostrar: false, mensagem: '', tipo: 'falha' })
+  const [resultado, mudarResultado] = useState<[Date, number, number][]>([])
+  const [mostrarResultado, mudarMostrarResultado] = useState<boolean>(false)
+
+  const [calculando, mudarCalculando] = useState<boolean>(false)
 
   const calcular = async () => {
     try {
-      const parametros: IParametrosCalculo = {
-        calcularAbono,
-        dataAtualizacao,
-        indiceReposicaoTeto,
-        equivalenciaSalarial
-      }
+      mudarCalculando(true)
       const resultado = temDerivado 
         ? await calcularBeneficio(parametros, originario, derivado) 
         : await calcularBeneficio(parametros, originario) 
       depurador.console.log(resultado)
-    } catch (e) {
+      mudarResultado(resultado)
+      mudarCalculando(false)
+      mudarMostrarResultado(true)
+    } catch (e: any) {
       depurador.console.error(e)
+      mudarCalculando(false)
+      mudarStatusErro({
+        mostrar: true,
+        mensagem: e.message,
+        tipo: 'falha'
+      })
     }
 
   }
@@ -61,18 +76,28 @@ export default function CalculadoraPrescricao() {
   const apagar = () => {
     mudarOriginario({ dib: undefined, rmi: 0, dcb: undefined, percentualMinimo: 100 })
     mudarDerivado({ dib: undefined, rmi: 0, dcb: undefined, percentualMinimo: 100 })
-    mudarIndiceReposicaoTeto(1)
-    mudarEquivalenciaSalarial(1)
-    mudarDataAtualizacao(new Date())
-    mudarCalcularAbono(true)
+    mudarParametros({
+      calcularAbono: true,
+      dataAtualizacao: new Date(),
+      indiceReposicaoTeto: 1,
+      equivalenciaSalarial: 1     
+    })
     mudarAbaixoMinimoOriginario(false)
     mudarAbaixoMinimoDerivado(false)
     mudarTemDerivado(false)
   }
 
+  const dispensar = () => {
+    mudarStatusErro({
+      ...statusErro,
+      mostrar: false
+    })
+    mudarMostrarResultado(false)
+  }
+
   return (
     <>
-      <div className={classeTituloSessaoPrimeira}>Dados do Benefício Originário</div>
+      <div className={classeSeparador}>Dados do Benefício Originário</div>
       <Stack horizontal horizontalAlign="end">
         <Stack tokens={{ maxWidth: '150px' }} styles={stackStyles}>
           <AppNumeroInput rotulo="RMI" valor={originario.rmi} onChange={val => mudarOriginario({ ...originario, rmi: val })} />
@@ -100,7 +125,9 @@ export default function CalculadoraPrescricao() {
           onChange={val => mudarOriginario({ ...originario, dcb: val })}
         />
       </Stack>
-      <div className={classeTituloSessao}>Dados do Benefício Derivado (opcional)</div>
+
+      <div className={classeSeparador}>Dados do Benefício Derivado (opcional)</div>
+
       <Stack horizontal horizontalAlign="end" tokens={stackTokens} styles={stackStyles}>
         <Checkbox label="Tem benefício derivado" checked={temDerivado} onChange={() => mudarTemDerivado(!temDerivado)} />
       </Stack>
@@ -136,31 +163,59 @@ export default function CalculadoraPrescricao() {
           </Stack>
         </>
     : ''}
-      <div className={classeTituloSessao}>Parâmetros de Cálculo</div>
+
+      <div className={classeSeparador}>Parâmetros de Cálculo</div>
+
       <Stack horizontal horizontalAlign="end">
         <Stack tokens={{ maxWidth: '150px' }} styles={stackStyles}>
-          <AppNumeroInput rotulo="Índice Reposição" valor={indiceReposicaoTeto} onChange={val => mudarIndiceReposicaoTeto(val)} />
+          <AppNumeroInput rotulo="Índice Reposição" valor={parametros.indiceReposicaoTeto} onChange={val => mudarParametros({ ...parametros, indiceReposicaoTeto: val })} />
         </Stack>
       </Stack>
       <Stack horizontal horizontalAlign="end" tokens={stackTokens} styles={stackStyles}>
         <Stack tokens={{ maxWidth: '150px' }} styles={stackStyles}>
-          <AppNumeroInput rotulo="Equiv. Salarial" valor={equivalenciaSalarial} onChange={val => mudarEquivalenciaSalarial(val)} />
+          <AppNumeroInput rotulo="Equiv. Salarial" valor={parametros.equivalenciaSalarial} onChange={val => mudarParametros({ ...parametros, equivalenciaSalarial: val })} />
         </Stack>
       </Stack>
       <Stack horizontal horizontalAlign="end" tokens={stackTokens} styles={stackStyles}>
-        <Checkbox label="Calcular Abono" checked={calcularAbono} onChange={() => mudarCalcularAbono(!calcularAbono)} />
+        <Checkbox label="Calcular Abono" checked={parametros.calcularAbono} onChange={() => mudarParametros({ ...parametros, calcularAbono: !parametros.calcularAbono })} />
       </Stack>
       <Stack horizontal horizontalAlign="end" tokens={stackTokens} styles={stackStyles}>
         <AppDataInput
           rotulo="Data Atualização"
-          valor={dataAtualizacao}
-          onChange={val => mudarDataAtualizacao(val)}
+          valor={parametros.dataAtualizacao}
+          onChange={val => mudarParametros({ ...parametros, dataAtualizacao: val })}
         />
       </Stack>
-      <Stack horizontal horizontalAlign="end" styles={stackStyles} disableShrink={false}>
-        <PrimaryButton iconProps={{ iconName: 'Lightningbolt' }} text='Calcular' style={{ marginRight: 10 }} onClick={calcular} />
+
+      <div className={classeSeparador}>&nbsp;</div>
+
+      <Stack horizontal horizontalAlign="space-evenly" styles={stackStyles} disableShrink={false}>
         <DefaultButton iconProps={{ iconName: 'EraseTool' }} text='Apagar' onClick={apagar} />
+        <PrimaryButton iconProps={{ iconName: 'Lightningbolt' }} text='Calcular' onClick={calcular} />
       </Stack>
+
+      <AppModalAviso
+        mostrar={statusErro.mostrar}
+        mensagem={statusErro.mensagem}
+        tipo={statusErro.tipo}
+        aoDispensar={dispensar}
+      />
+
+      <ModalBeneficio
+        mostrar={mostrarResultado}
+        originario={originario}
+        parametros={parametros}
+        resultado={resultado}
+        aoDispensar={dispensar}
+      />
+
+      {calculando && <Overlay isDarkThemed={true}>
+        <Stack verticalAlign='center' style={{ height: '100%' }} disableShrink={true}>
+          <Spinner size={SpinnerSize.large} />
+          <Label style={{ color: 'white', fontSize: FontSizes.large }}>Calculando</Label>
+        </Stack>
+      </Overlay>}
+
     </>
   )
 }

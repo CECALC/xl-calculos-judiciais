@@ -171,7 +171,7 @@ export async function calcularBeneficio(
   parametros: IParametrosCalculo,
   originario: Partial<IDadosBeneficio>, 
   derivado?: Partial<IDadosBeneficio>
-) {
+): Promise<[Date, number, number][]> {
   
   let { dataAtualizacao, calcularAbono, indiceReposicaoTeto, equivalenciaSalarial } = parametros 
   
@@ -397,9 +397,9 @@ export async function calcularBeneficio(
           rma = rma * proporcaoFinal;
         }
       }
-      return [rma, abono]
+      return [item.competencia, rma, abono]
     } else {
-      return [0, 0];
+      return [item.competencia, 0, 0];
     }
   });
 }

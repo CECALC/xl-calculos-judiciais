@@ -65,7 +65,7 @@ class AtualizacaoIndices {
       setTimeout(() => {
         if (sucesso) return
         request.abort()
-        reject(new Error('Espera excedeu 10 segundos'))
+        reject(new Error('Falha na obtenção dos índices de atualização. Espera excedeu 10 segundos.'))
       }, 10000)
     })
   }

@@ -17,7 +17,7 @@ const classeBotao = mergeStyles({
 })
 
 export default function CalculadorasPrevidenciarias() {
-  const [selecionada, mudarSelecionada] = useState(1)
+  const [selecionada, mudarSelecionada] = useState(0)
 
   const calculadora = () => {
     if (selecionada === 1) return <CalculadoraTempo />
@@ -29,12 +29,12 @@ export default function CalculadorasPrevidenciarias() {
   return (
     <>
       <Stack horizontal styles={stackStyles} horizontalAlign="space-around" disableShrink={false}>
-        {/* <DefaultButton
+        <DefaultButton
           text="Benefício"
           primary={selecionada === 0}
           className={classeBotao}
           onClick={() => mudarSelecionada(0)}
-        /> */}
+        />
         <DefaultButton
           text="Tempo"
           primary={selecionada === 1}
