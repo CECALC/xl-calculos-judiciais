@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { 
   DefaultButton, 
   mergeStyleSets,
@@ -9,10 +9,18 @@ import {
   ContextualMenu,
   IconButton,
   IButtonStyles,
-  FontSizes
+  FontSizes,
+  Checkbox,
+  IStackTokens,
+  IStackStyles,
+  Stack
 } from '@fluentui/react'
-import { IDadosBeneficio, IParametrosCalculo } from './auxiliares'
+import { IDadosBeneficio, IParametrosCalculo } from '../../utils'
 import { tipoBooleano, tipoData, tipoNumero } from '@cecalc/utils';
+import { definirValorDaSelecao, gerarTabelaDeFormatos, TValorExcel } from '../../services';
+
+const stackTokens: IStackTokens = { childrenGap: 10 }
+const stackStyles: Partial<IStackStyles> = { root: { padding: '12px 0 ' } }
 
 const theme = getTheme();
 const styles = mergeStyleSets({
@@ -43,6 +51,9 @@ const styles = mergeStyleSets({
     padding: '0 24px 24px 24px 24px'
   },
   sessao: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
     fontWeight: FontWeights.semibold,
     fontSize: FontSizes.medium,
     margin: '12px 0',
@@ -136,22 +147,34 @@ function VisualizadorPropriedades({ objeto }: { objeto?: { [key: string]: any } 
   )
 }
 
-function TabelaResultado({ resultado }: { resultado: [Date, number, number][]}){
+interface IPropsTabelaResultado {
+  resultado: (Date|number)[][]
+  mostrarCompetencias: boolean
+  mostrarTodasAsLinhas: boolean  
+}
+
+const ajustarResultado = ({ resultado, mostrarCompetencias, mostrarTodasAsLinhas }: IPropsTabelaResultado): (Date|number)[][] => {
+  return resultado.filter(linha => mostrarTodasAsLinhas ? true : linha[1] !== 0)
+  .map(linha => mostrarCompetencias ? linha : linha.slice(1))
+}
+
+function TabelaResultado({ resultado, mostrarCompetencias, mostrarTodasAsLinhas }: IPropsTabelaResultado){
   if (!Array.isArray(resultado) || !resultado.length) return <span>Algo saiu errado... Resultado não disponível</span>
   return (
     <div className={styles.tabelaContainer}>
       <table className={styles.tabela}>
         <thead>
-          <th className={styles.tabelaLinha}>Competência</th>
+          {mostrarCompetencias && <th className={styles.tabelaLinha}>Competência</th>}
           <th className={styles.tabelaLinha}>Renda</th>
           <th className={styles.tabelaLinha}>Abono</th>
         </thead>
         <tbody>
-          {resultado.filter(linha => linha[1] !== 0).map((linha, indice) => {
+          {ajustarResultado({ resultado, mostrarCompetencias, mostrarTodasAsLinhas })
+            .map((linha, indice) => {
             return (
-              <tr className={linha[2] === 0 ? styles.tabelaLinha : styles.tabelaLinhaDestacada} key={`linha-${indice}`}>
+              <tr className={linha[linha.length - 1] === 0 ? styles.tabelaLinha : styles.tabelaLinhaDestacada} key={`linha-${indice}`}>
                 {linha.map((celula, coluna) => {
-                  if (coluna === 0) {
+                  if (mostrarCompetencias && coluna === 0) {
                     return <td className={styles.tabelaCompetencia} key={'celula-0'}>{(celula as Date).toLocaleDateString()}</td>
                   }
                   return <td className={styles.tabelaCelula} key={`celula-${coluna}`}>{(celula as number).toFixed(2)}</td>
@@ -182,6 +205,32 @@ export default function ModalBeneficio({
   derivado,
   aoDispensar
 }: IProps) {
+  const [mostrarCompetencias, mudarMostrarCompetencias] = useState<boolean>(true)
+  const [mostrarTodasAsLinhas, mudarMostrarTodasAsLinhas] = useState<boolean>(false)
+
+  const inserirOriginario = () => {
+    if (!originario) return
+    const valores = Object.values(originario).map(val => [val])
+    definirValorDaSelecao(valores as TValorExcel[][], gerarTabelaDeFormatos(valores as TValorExcel[][]))
+  }
+
+  const inserirDerivado = () => {
+    if (!derivado) return
+    const valores = Object.values(derivado).map(val => [val])
+    definirValorDaSelecao(valores as TValorExcel[][], gerarTabelaDeFormatos(valores as TValorExcel[][]))
+  }
+
+  const inserirParametros = () => {
+    if (!parametros) return
+    const valores = Object.values(parametros).map(val => [val])
+    definirValorDaSelecao(valores as TValorExcel[][], gerarTabelaDeFormatos(valores as TValorExcel[][]))
+  }
+
+  const inserirResultado = () => {
+    if (!resultado) return
+    const valores = Object.values(ajustarResultado({ resultado, mostrarCompetencias, mostrarTodasAsLinhas }))
+    definirValorDaSelecao(valores as TValorExcel[][], gerarTabelaDeFormatos(valores as TValorExcel[][]))
+  }
 
   return (
     <Modal
@@ -202,23 +251,58 @@ export default function ModalBeneficio({
         />
       </div>
       <div className={styles.body}>
-        <div className={styles.sessao}>Benefício Originário</div>
+        <div className={styles.sessao}>
+          Benefício Originário
+          <span title="colar na célula selecionada">
+            <IconButton
+              iconProps={{ iconName: 'ClearSelection' }}
+              onClick={inserirOriginario}
+            />
+          </span>          
+        </div>
         <VisualizadorPropriedades objeto={originario} />
         {derivado ? 
           (
             <>
-              <div className={styles.sessao}>Benefício Derivado</div>
+              <div className={styles.sessao}>
+                Benefício Derivado
+                <span title="colar na célula selecionada">
+                  <IconButton
+                    iconProps={{ iconName: 'ClearSelection' }}
+                    onClick={inserirDerivado}
+                  />
+                </span>          
+              </div>
               <VisualizadorPropriedades objeto={derivado} />
             </>
           )
           : 
           ''
         }
-        <div className={styles.sessao}>Parâmetros de Cálculo</div>
+        <div className={styles.sessao}>
+          Parâmetros de Cálculo
+          <span title="colar na célula selecionada">
+            <IconButton
+              iconProps={{ iconName: 'ClearSelection' }}
+              onClick={inserirParametros}
+            />
+          </span>          
+        </div>
         <VisualizadorPropriedades objeto={parametros} />
-        <div className={styles.sessao}>Resultado</div>
-        <TabelaResultado resultado={resultado} />
-
+        <div className={styles.sessao}>
+          Resultado
+          <span title="colar na célula selecionada">
+            <IconButton
+              iconProps={{ iconName: 'ClearSelection' }}
+              onClick={inserirResultado}
+            />
+          </span>          
+        </div>
+        <TabelaResultado resultado={resultado} mostrarCompetencias={mostrarCompetencias} mostrarTodasAsLinhas={mostrarTodasAsLinhas} />
+        <Stack verticalAlign="start" tokens={stackTokens} styles={stackStyles}>
+          <Checkbox label="Mostrar competências" checked={mostrarCompetencias} onChange={() => mudarMostrarCompetencias(!mostrarCompetencias)} />
+          <Checkbox label="Mostrar todas as linhas" checked={mostrarTodasAsLinhas} onChange={() => mudarMostrarTodasAsLinhas(!mostrarTodasAsLinhas)} />
+        </Stack>
       </div>
       <div className={styles.footer}>
         <DefaultButton text='Fechar' onClick={aoDispensar} />

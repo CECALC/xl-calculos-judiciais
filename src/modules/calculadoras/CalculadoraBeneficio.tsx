@@ -14,8 +14,7 @@ import {
   FontSizes
  } from '@fluentui/react'
 import { AppDataInput, AppModalAviso, AppNumeroInput, TTipoModal } from '../../components'
-import { calcularBeneficio, IDadosBeneficio, IParametrosCalculo } from './auxiliares'
-import { depurador } from '../../utils'
+import { calcularBeneficio, IDadosBeneficio, IParametrosCalculo, depurador } from '../../utils'
 import ModalBeneficio from './ModalBeneficio'
 
 const stackTokens: IStackTokens = { childrenGap: 10 }

@@ -12,7 +12,7 @@ import {
 import { CData, METODO_DIAS_360 } from '@cecalc/utils'
 import { AppDataInput } from '../../components'
 import { definirValorDaSelecao, TValorExcel } from '../../services'
-import { calcularIntervalo } from './auxiliares'
+import { calcularIntervalo } from '../../utils'
 
 const stackTokens: IStackTokens = { childrenGap: 10 }
 const stackStyles: Partial<IStackStyles> = { root: { padding: '16px 0' } }

@@ -9,7 +9,7 @@ import {
  } from '@fluentui/react'
 import { AppDataInput, AppNumeroInput } from '../../components'
 import { definirValorDaSelecao, TValorExcel } from '../../services'
-import { calcularPrescricao } from './auxiliares'
+import { calcularPrescricao } from '../../utils'
 
 const stackTokens: IStackTokens = { childrenGap: 10 }
 const stackStyles: Partial<IStackStyles> = { root: { padding: '12px 0 ' } }
