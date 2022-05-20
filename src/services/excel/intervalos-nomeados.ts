@@ -59,9 +59,9 @@ export const nomeSemPrefixos = (intervalo: string) => {
 export const nomesComPrefixos = async (nomesSemPrefixo: string | string[]): Promise<string | string[]> => {
   const intervalos = (await obterItensNomeados()).map(item => item.name)
   if (Array.isArray(nomesSemPrefixo)) {
-    return intervalos.filter(intervalo => nomesSemPrefixo.some(nome => intervalo.includes(nome)))
+    return intervalos.filter(intervalo => nomesSemPrefixo.some(nome => intervalo.startsWith(nomeSemPrefixos(nome))))
   }
-  return intervalos.find(intervalo => intervalo.includes(nomesSemPrefixo)) || ''
+  return intervalos.find(intervalo => nomesSemPrefixo.startsWith(nomeSemPrefixos(intervalo))) || ''
 }
 
 export const definirDirecao = (intervalo: string): DIRECAO => {
