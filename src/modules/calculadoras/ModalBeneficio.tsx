@@ -164,9 +164,11 @@ function TabelaResultado({ resultado, mostrarCompetencias, mostrarTodasAsLinhas 
     <div className={styles.tabelaContainer}>
       <table className={styles.tabela}>
         <thead>
-          {mostrarCompetencias && <th className={styles.tabelaLinha}>Competência</th>}
-          <th className={styles.tabelaLinha}>Renda</th>
-          <th className={styles.tabelaLinha}>Abono</th>
+          <tr>
+            {mostrarCompetencias && <th className={styles.tabelaLinha}>Competência</th>}
+            <th className={styles.tabelaLinha}>Renda</th>
+            <th className={styles.tabelaLinha}>Abono</th>
+          </tr>
         </thead>
         <tbody>
           {ajustarResultado({ resultado, mostrarCompetencias, mostrarTodasAsLinhas })

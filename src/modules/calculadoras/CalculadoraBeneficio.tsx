@@ -11,7 +11,9 @@ import {
   Spinner,
   SpinnerSize,
   Label,
-  FontSizes
+  FontSizes,
+  Pivot,
+  PivotItem
  } from '@fluentui/react'
 import { AppDataInput, AppModalAviso, AppNumeroInput, TTipoModal } from '../../components'
 import { calcularBeneficio, IDadosBeneficio, IParametrosCalculo, depurador } from '../../utils'
@@ -24,8 +26,7 @@ const classeSeparador = mergeStyles({
   fontWeight: 'bold',
   width: '100%',
   borderTop: '1px solid lightgray',
-  paddingTop: '16px',
-  marginTop: '16px'
+  marginTop: '8px'
 })
 
 interface IStatusErro {
@@ -96,98 +97,100 @@ export default function CalculadoraPrescricao() {
 
   return (
     <>
-      <div className={classeSeparador}>Dados do Benefício Originário</div>
-      <Stack horizontal horizontalAlign="end">
-        <Stack tokens={{ maxWidth: '150px' }} styles={stackStyles}>
-          <AppNumeroInput rotulo="RMI" valor={originario.rmi} onChange={val => mudarOriginario({ ...originario, rmi: val })} />
-        </Stack>
-      </Stack>
-      <Stack horizontal horizontalAlign="end" tokens={stackTokens} styles={stackStyles}>
-        <Checkbox label="Calcular abaixo do mínimo" checked={abaixoMinimoOriginario} onChange={() => mudarAbaixoMinimoOriginario(!abaixoMinimoOriginario)} />
-      </Stack>
-      {abaixoMinimoOriginario ? 
-        <Stack horizontal horizontalAlign="end">
-          <Stack tokens={{ maxWidth: '150px' }} styles={stackStyles}>
-            <AppNumeroInput rotulo="Percentual" valor={originario.percentualMinimo} onChange={val => mudarOriginario({ ...originario, percentualMinimo: val })} />
-          </Stack>
-        </Stack>
-        : ''}
-      <Stack horizontal horizontalAlign="end" tokens={stackTokens} styles={stackStyles}>
-        <AppDataInput
-          rotulo="DIB"
-          valor={originario.dib}
-          onChange={val => mudarOriginario({ ...originario, dib: val })}
-        />
-        <AppDataInput
-          rotulo="DCB (opcional)"
-          valor={originario.dcb}
-          onChange={val => mudarOriginario({ ...originario, dcb: val })}
-        />
-      </Stack>
-
-      <div className={classeSeparador}>Dados do Benefício Derivado (opcional)</div>
-
-      <Stack horizontal horizontalAlign="end" tokens={stackTokens} styles={stackStyles}>
-        <Checkbox label="Tem benefício derivado" checked={temDerivado} onChange={() => mudarTemDerivado(!temDerivado)} />
-      </Stack>
-      {temDerivado ? 
-        <>
+      <Pivot
+        aria-label="Dados Cálculo Benefício"
+        linkSize="normal"
+        overflowBehavior="menu"
+        overflowAriaLabel="mais itens"
+      >
+        <PivotItem headerText="Originário">
           <Stack horizontal horizontalAlign="end">
             <Stack tokens={{ maxWidth: '150px' }} styles={stackStyles}>
-            <AppNumeroInput rotulo="RMI" valor={derivado.rmi} onChange={val => mudarDerivado({ ...derivado, rmi: val })} />
+              <AppNumeroInput rotulo="RMI Originário" valor={originario.rmi} onChange={val => mudarOriginario({ ...originario, rmi: val })} />
             </Stack>
           </Stack>
           <Stack horizontal horizontalAlign="end" tokens={stackTokens} styles={stackStyles}>
-            <Checkbox label="Calcular abaixo do mínimo" checked={abaixoMinimoDerivado} onChange={() => mudarAbaixoMinimoDerivado(!abaixoMinimoDerivado)} />
+            <Checkbox label="Calcular abaixo do mínimo" checked={abaixoMinimoOriginario} onChange={() => mudarAbaixoMinimoOriginario(!abaixoMinimoOriginario)} />
           </Stack>
           {abaixoMinimoOriginario ? 
             <Stack horizontal horizontalAlign="end">
               <Stack tokens={{ maxWidth: '150px' }} styles={stackStyles}>
-                <AppNumeroInput rotulo="Percentual" valor={derivado.percentualMinimo} onChange={val => mudarDerivado({ ...derivado, percentualMinimo: val })} />
+                <AppNumeroInput rotulo="Percentual" valor={originario.percentualMinimo} onChange={val => mudarOriginario({ ...originario, percentualMinimo: val })} />
               </Stack>
             </Stack>
             : ''}
-
           <Stack horizontal horizontalAlign="end" tokens={stackTokens} styles={stackStyles}>
             <AppDataInput
               rotulo="DIB"
-              valor={derivado.dib}
-              onChange={val => mudarDerivado({ ...derivado, dib: val })}
+              valor={originario.dib}
+              onChange={val => mudarOriginario({ ...originario, dib: val })}
             />
             <AppDataInput
               rotulo="DCB (opcional)"
-              valor={derivado.dcb}
-              onChange={val => mudarDerivado({ ...derivado, dcb: val })}
+              valor={originario.dcb}
+              onChange={val => mudarOriginario({ ...originario, dcb: val })}
             />
           </Stack>
-        </>
-    : ''}
+          <Stack horizontal horizontalAlign="end" tokens={stackTokens} styles={stackStyles}>
+            <Checkbox label="Tem benefício derivado" checked={temDerivado} onChange={() => mudarTemDerivado(!temDerivado)} />
+          </Stack>
+        </PivotItem>
+        {temDerivado ? 
+          <PivotItem headerText="Derivado">
+            <Stack horizontal horizontalAlign="end">
+              <Stack tokens={{ maxWidth: '150px' }} styles={stackStyles}>
+                <AppNumeroInput rotulo="RMI Derivado" valor={derivado.rmi} onChange={val => mudarDerivado({ ...derivado, rmi: val })} />
+              </Stack>
+            </Stack>
+            <Stack horizontal horizontalAlign="end" tokens={stackTokens} styles={stackStyles}>
+              <Checkbox label="Calcular abaixo do mínimo" checked={abaixoMinimoDerivado} onChange={() => mudarAbaixoMinimoDerivado(!abaixoMinimoDerivado)} />
+            </Stack>
+            {abaixoMinimoDerivado ? 
+              <Stack horizontal horizontalAlign="end">
+                <Stack tokens={{ maxWidth: '150px' }} styles={stackStyles}>
+                  <AppNumeroInput rotulo="Percentual" valor={derivado.percentualMinimo} onChange={val => mudarDerivado({ ...derivado, percentualMinimo: val })} />
+                </Stack>
+              </Stack>
+              : ''}
 
-      <div className={classeSeparador}>Parâmetros de Cálculo</div>
-
-      <Stack horizontal horizontalAlign="end">
-        <Stack tokens={{ maxWidth: '150px' }} styles={stackStyles}>
-          <AppNumeroInput rotulo="Índice Reposição" valor={parametros.indiceReposicaoTeto} onChange={val => mudarParametros({ ...parametros, indiceReposicaoTeto: val })} />
-        </Stack>
-      </Stack>
-      <Stack horizontal horizontalAlign="end" tokens={stackTokens} styles={stackStyles}>
-        <Stack tokens={{ maxWidth: '150px' }} styles={stackStyles}>
-          <AppNumeroInput rotulo="Equiv. Salarial" valor={parametros.equivalenciaSalarial} onChange={val => mudarParametros({ ...parametros, equivalenciaSalarial: val })} />
-        </Stack>
-      </Stack>
-      <Stack horizontal horizontalAlign="end" tokens={stackTokens} styles={stackStyles}>
-        <Checkbox label="Calcular Abono" checked={parametros.calcularAbono} onChange={() => mudarParametros({ ...parametros, calcularAbono: !parametros.calcularAbono })} />
-      </Stack>
-      <Stack horizontal horizontalAlign="end" tokens={stackTokens} styles={stackStyles}>
-        <AppDataInput
-          rotulo="Data Atualização"
-          valor={parametros.dataAtualizacao}
-          onChange={val => mudarParametros({ ...parametros, dataAtualizacao: val })}
-        />
-      </Stack>
+            <Stack horizontal horizontalAlign="end" tokens={stackTokens} styles={stackStyles}>
+              <AppDataInput
+                rotulo="DIB"
+                valor={derivado.dib}
+                onChange={val => mudarDerivado({ ...derivado, dib: val })}
+              />
+              <AppDataInput
+                rotulo="DCB (opcional)"
+                valor={derivado.dcb}
+                onChange={val => mudarDerivado({ ...derivado, dcb: val })}
+              />
+            </Stack>
+            
+          </PivotItem>
+        : ''}
+        <PivotItem headerText="Parâmetros">
+          <Stack horizontal horizontalAlign="space-between">
+            <Stack tokens={{ maxWidth: '140px' }} styles={stackStyles}>
+              <AppNumeroInput rotulo="Índice Reposição" valor={parametros.indiceReposicaoTeto} onChange={val => mudarParametros({ ...parametros, indiceReposicaoTeto: val })} />
+            </Stack>
+            <Stack tokens={{ maxWidth: '140px' }} styles={stackStyles}>
+              <AppNumeroInput rotulo="Equiv. Salarial" valor={parametros.equivalenciaSalarial} onChange={val => mudarParametros({ ...parametros, equivalenciaSalarial: val })} />
+            </Stack>
+          </Stack>
+          <Stack horizontal horizontalAlign="end" tokens={stackTokens} styles={stackStyles}>
+            <Checkbox label="Calcular Abono" checked={parametros.calcularAbono} onChange={() => mudarParametros({ ...parametros, calcularAbono: !parametros.calcularAbono })} />
+          </Stack>
+          <Stack horizontal horizontalAlign="end" tokens={stackTokens} styles={stackStyles}>
+            <AppDataInput
+              rotulo="Data Atualização"
+              valor={parametros.dataAtualizacao}
+              onChange={val => mudarParametros({ ...parametros, dataAtualizacao: val })}
+            />
+          </Stack>
+        </PivotItem>
+      </Pivot>
 
       <div className={classeSeparador}>&nbsp;</div>
-
       <Stack horizontal horizontalAlign="space-evenly" styles={stackStyles} disableShrink={false}>
         <DefaultButton iconProps={{ iconName: 'EraseTool' }} text='Apagar' onClick={apagar} />
         <PrimaryButton iconProps={{ iconName: 'Lightningbolt' }} text='Calcular' onClick={calcular} />
@@ -214,7 +217,6 @@ export default function CalculadoraPrescricao() {
           <Label style={{ color: 'white', fontSize: FontSizes.large }}>Calculando</Label>
         </Stack>
       </Overlay>}
-
     </>
   )
 }
