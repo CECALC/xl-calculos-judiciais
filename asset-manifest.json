@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/xl-calculos-judiciais/static/css/main.464f9450.css",
-    "main.js": "/xl-calculos-judiciais/static/js/main.95f6bba7.js",
+    "main.js": "/xl-calculos-judiciais/static/js/main.42a7ff11.js",
     "static/js/787.45256b0e.chunk.js": "/xl-calculos-judiciais/static/js/787.45256b0e.chunk.js",
     "index.html": "/xl-calculos-judiciais/index.html",
     "main.464f9450.css.map": "/xl-calculos-judiciais/static/css/main.464f9450.css.map",
-    "main.95f6bba7.js.map": "/xl-calculos-judiciais/static/js/main.95f6bba7.js.map",
+    "main.42a7ff11.js.map": "/xl-calculos-judiciais/static/js/main.42a7ff11.js.map",
     "787.45256b0e.chunk.js.map": "/xl-calculos-judiciais/static/js/787.45256b0e.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.464f9450.css",
-    "static/js/main.95f6bba7.js"
+    "static/js/main.42a7ff11.js"
   ]
 }
