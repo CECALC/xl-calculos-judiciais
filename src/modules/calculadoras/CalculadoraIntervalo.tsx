@@ -57,7 +57,11 @@ const mapaMetodos: Record<string, METODO_DIAS_360> = {
   nasd: METODO_DIAS_360.US_NASD
 }
 
-export default function CalculadoraIntervalo() {
+interface IProps {
+  aoApagar: () => void
+}
+
+export default function CalculadoraIntervalo({ aoApagar }: IProps) {
   const [metodo, mudarMetodo] = useState(METODO_DIAS_360.EXCEL)
   const [dataInicial, mudarDataInicial] = useState(new Date())
   const [dataFinal, mudarDataFinal] = useState(new Date())
@@ -80,10 +84,10 @@ export default function CalculadoraIntervalo() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataInicial, dataFinal, metodo])
 
-  const apagar = () => {
-    mudarDataInicial(new Date())
-    mudarDataFinal(new Date())
-  }
+  // const apagar = () => {
+  //   mudarDataInicial(new Date())
+  //   mudarDataFinal(new Date())
+  // }
 
   const atualizarData = (novoValor?: Date, qual: 'inicial' | 'final' = 'inicial') => {
     if (!novoValor) return
@@ -128,12 +132,12 @@ export default function CalculadoraIntervalo() {
         <AppDataInput
           rotulo="data inicial"
           valor={dataInicial}
-          onChange={val => atualizarData(val, 'inicial')}
+          aoMudar={val => atualizarData(val, 'inicial')}
         />
         <AppDataInput
           rotulo="data final"
           valor={dataFinal}
-          onChange={val => atualizarData(val, 'final')}
+          aoMudar={val => atualizarData(val, 'final')}
         />
       </Stack>
       <Stack horizontal horizontalAlign="end" tokens={stackTokens} styles={stackStyles}>
@@ -160,7 +164,7 @@ export default function CalculadoraIntervalo() {
       </Stack>
 
       <Stack horizontal horizontalAlign="end" styles={stackStyles} disableShrink={false}>
-        <IconButton iconProps={{ iconName: 'EraseTool' }} title="apagar" onClick={apagar} />
+        <IconButton iconProps={{ iconName: 'EraseTool' }} title="apagar" onClick={aoApagar} />
       </Stack>
     </>
   )

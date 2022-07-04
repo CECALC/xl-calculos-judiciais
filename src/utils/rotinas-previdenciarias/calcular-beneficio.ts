@@ -26,10 +26,10 @@ export interface IDadosReajuste {
 }
 
 export interface IParametrosCalculo {
-  indiceReposicaoTeto: number
+  indiceReposicaoTeto?: number
   equivalenciaSalarial?: number
   calcularAbono: boolean
-  dataAtualizacao: Date
+  dataAtualizacao?: Date
 }
 
 export async function calcularBeneficio(
@@ -65,8 +65,8 @@ export async function calcularBeneficio(
     throw new Error('Data de atualização irregular.'); 
   }
   
-  if (!tipoNumero(indiceReposicaoTeto) || indiceReposicaoTeto < 1) {
-    indiceReposicaoTeto = 1;
+  if (!tipoNumero(indiceReposicaoTeto)) {
+    throw new Error('Índice de reposição do teto irregular.'); 
   }
   
   if (!tipoNumero(equivalenciaSalarial) || equivalenciaSalarial < 0) {
@@ -122,8 +122,8 @@ export async function calcularBeneficio(
   **/
   const dataInicialDiferencas = aplicarArt58 ? gerarData('01/12/1991') : new Date(originario.dib.getTime())
   const dataFinalDiferencas = temDerivado 
-  ? tipoData(derivado.dcb) ? derivado.dcb : ultimoDiaDoMes(parametros.dataAtualizacao, 0)
-  : tipoData(originario.dcb) ? originario.dcb : ultimoDiaDoMes(parametros.dataAtualizacao, 0)
+  ? tipoData(derivado.dcb) ? derivado.dcb : ultimoDiaDoMes(dataAtualizacao, 0)
+  : tipoData(originario.dcb) ? originario.dcb : ultimoDiaDoMes(dataAtualizacao, 0)
   
   const competenciaInicial = primeiroDiaDoMes(dataInicialDiferencas, 0)
   const competenciaFinal = primeiroDiaDoMes(dataFinalDiferencas, 0)
@@ -202,7 +202,7 @@ export async function calcularBeneficio(
     if (item.competencia.valueOf() >= competenciaInicial.valueOf() && item.competencia.valueOf() <= competenciaFinal.valueOf()) {
       if (item.dataBase && item.competencia.valueOf() > competenciaInicial.valueOf()) { // nunca há reajuste na primeira competência
         if (primeiraDataBase && item.competencia.valueOf() === primeiraDataBase.valueOf() && !aplicarArt58) {
-          baseReajuste = parseFloat((baseReajuste * indiceProporcional * indiceReposicaoTeto).toString().replace(/(\d*\.\d{2})(\d*.)/, '$1'))
+          baseReajuste = parseFloat((baseReajuste * indiceProporcional * indiceReposicaoTeto!).toString().replace(/(\d*\.\d{2})(\d*.)/, '$1'))
 
         } else {
           baseReajuste = parseFloat((baseReajuste * item.indiceIntegral).toString().replace(/(\d*\.\d{2})(\d*.)/, '$1'))

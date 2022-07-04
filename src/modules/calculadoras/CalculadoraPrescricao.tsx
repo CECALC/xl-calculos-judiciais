@@ -9,7 +9,7 @@ import {
  } from '@fluentui/react'
 import { AppDataInput, AppNumeroInput } from '../../components'
 import { definirValorDaSelecao, TValorExcel } from '../../services'
-import { calcularPrescricao } from '../../utils'
+import { calcularPrescricao, validarParametrosCalculoPrescricao } from '../../utils'
 
 const stackTokens: IStackTokens = { childrenGap: 10 }
 const stackStyles: Partial<IStackStyles> = { root: { padding: '12px 0 ' } }
@@ -29,15 +29,33 @@ const classeCartao = mergeStyles({
   }
 })
 
-export default function CalculadoraPrescricao() {
-  const [prazo, mudarPrazo] = useState(60)
-  const [termoInicial, mudarTermoInicial] = useState(new Date())
-  const [marcoInterruptivo, mudarMarcoInterruptivo] = useState(new Date())
-  const [inicioSuspensao, mudarInicioSuspensao] = useState(new Date())
-  const [fimSuspensao, mudarFimSuspensao] = useState(new Date())
+interface IProps {
+  aoApagar: () => void
+}
 
-  const [diasSuspensao, mudarDiasSuspensao] = useState(0)
-  const [inicioPrescricao, mudarInicioPrescricao] = useState(new Date())
+export default function CalculadoraPrescricao({ aoApagar }: IProps) {
+  const [prazo, mudarPrazo] = useState<number | undefined>(60)
+  const [termoInicial, mudarTermoInicial] = useState<Date | undefined>(new Date())
+  const [marcoInterruptivo, mudarMarcoInterruptivo] = useState<Date | undefined>(new Date())
+  const [inicioSuspensao, mudarInicioSuspensao] = useState<Date | undefined>(new Date())
+  const [fimSuspensao, mudarFimSuspensao] = useState<Date | undefined>(new Date())
+
+  const [diasSuspensao, mudarDiasSuspensao] = useState<number | undefined>(0)
+  const [inicioPrescricao, mudarInicioPrescricao] = useState<Date | undefined>(new Date())
+
+  const [valido, mudarValido] = useState<boolean>(false)
+
+  useEffect(() => {
+    const parametrosValidos = validarParametrosCalculoPrescricao(
+      prazo,
+      termoInicial,
+      marcoInterruptivo,
+      inicioSuspensao,
+      fimSuspensao
+    )
+    mudarValido(parametrosValidos)
+  }, [prazo, termoInicial, marcoInterruptivo, inicioSuspensao, fimSuspensao])
+
 
   useEffect(() => {
     const resultado = calcularPrescricao(
@@ -51,13 +69,13 @@ export default function CalculadoraPrescricao() {
     mudarInicioPrescricao(resultado.inicioPrescricao)
   }, [prazo, termoInicial, marcoInterruptivo, inicioSuspensao, fimSuspensao])
 
-  const apagar = () => {
-    mudarPrazo(60)
-    mudarTermoInicial(new Date())
-    mudarMarcoInterruptivo(new Date())
-    mudarInicioSuspensao(new Date())
-    mudarFimSuspensao(new Date())
-  }
+  // const apagar = () => {
+  //   mudarPrazo(60)
+  //   mudarTermoInicial(new Date())
+  //   mudarMarcoInterruptivo(new Date())
+  //   mudarInicioSuspensao(new Date())
+  //   mudarFimSuspensao(new Date())
+  // }
 
   const atualizarData = (
     novoValor?: Date,
@@ -83,7 +101,7 @@ export default function CalculadoraPrescricao() {
     const valores = (
       tipo === 'diasSuspensao'
         ? [[diasSuspensao]]
-        : [[inicioPrescricao.toLocaleString().substring(0, 10)]]
+        : [[inicioPrescricao!.toLocaleString().substring(0, 10)]]
     ).map(linha => linha.map(celula => String(celula)))
     const formatos = tipo === 'diasSuspensao' ? [['#0']] : [['dd/MM/yyyy']]
     definirValorDaSelecao(valores as TValorExcel[][], formatos)
@@ -93,31 +111,31 @@ export default function CalculadoraPrescricao() {
     <>
       <Stack horizontal horizontalAlign="end">
         <Stack tokens={{ maxWidth: '150px' }} styles={stackStyles}>
-          <AppNumeroInput rotulo="Prazo (meses)" valor={prazo} onChange={val => mudarPrazo(val)} />
+          <AppNumeroInput rotulo="Prazo (meses)" valor={prazo} aoMudar={val => mudarPrazo(val)} />
         </Stack>
       </Stack>
       <Stack horizontal horizontalAlign="end" tokens={stackTokens} styles={stackStyles}>
         <AppDataInput
           rotulo="termo inicial"
           valor={termoInicial}
-          onChange={val => atualizarData(val, 'termoInicial')}
+          aoMudar={val => atualizarData(val, 'termoInicial')}
         />
         <AppDataInput
           rotulo="marco interruptivo"
           valor={marcoInterruptivo}
-          onChange={val => atualizarData(val, 'marcoInterruptivo')}
+          aoMudar={val => atualizarData(val, 'marcoInterruptivo')}
         />
       </Stack>
       <Stack horizontal horizontalAlign="end" tokens={stackTokens} styles={stackStyles}>
         <AppDataInput
           rotulo="início suspensão"
           valor={inicioSuspensao}
-          onChange={val => atualizarData(val, 'inicioSuspensao')}
+          aoMudar={val => atualizarData(val, 'inicioSuspensao')}
         />
         <AppDataInput
           rotulo="fim suspensão"
           valor={fimSuspensao}
-          onChange={val => atualizarData(val, 'fimSuspensao')}
+          aoMudar={val => atualizarData(val, 'fimSuspensao')}
         />
       </Stack>
       <Stack horizontal horizontalAlign="end" tokens={stackTokens} styles={stackStyles}>
@@ -127,15 +145,17 @@ export default function CalculadoraPrescricao() {
             <span title="colar na célula selecionada">
               <IconButton
                 iconProps={{ iconName: 'ClearSelection' }}
+                disabled={!valido}
                 onClick={() => inserirNaSelecao('diasSuspensao')}
               />
             </span>
           </div>
           <div>
-            <span>{`início: ${inicioPrescricao.toLocaleString().substring(0, 10)}`}</span>
+            <span>{`início: ${inicioPrescricao!.toLocaleString().substring(0, 10)}`}</span>
             <span title="colar na célula selecionada">
               <IconButton
                 iconProps={{ iconName: 'ClearSelection' }}
+                disabled={!valido}
                 onClick={() => inserirNaSelecao('marcoPrescricional')}
               />
             </span>
@@ -143,7 +163,7 @@ export default function CalculadoraPrescricao() {
         </DocumentCard>
       </Stack>
       <Stack horizontal horizontalAlign="end" styles={stackStyles} disableShrink={false}>
-        <IconButton iconProps={{ iconName: 'EraseTool' }} title="apagar" onClick={apagar} />
+        <IconButton iconProps={{ iconName: 'EraseTool' }} title="apagar" onClick={aoApagar} />
       </Stack>
     </>
   )

@@ -1,78 +1,51 @@
-import React from 'react'
-import { DatePicker, IDatePickerStrings } from '@fluentui/react'
-import { CData, converterStringEmData, tipoData } from '@cecalc/utils'
-
-const datePickerStrings: IDatePickerStrings = {
-  invalidInputErrorMessage: 'Data inválida',
-  isOutOfBoundsErrorMessage: 'Intervalo inválido',
-  isRequiredErrorMessage: 'A data é obrigatória',
-  isResetStatusMessage: 'Entrada inválida {0}, data reconfigurada para {1}',
-  goToToday: 'Ir para hoje',
-  months: [
-    'Janeiro',
-    'Fevereiro',
-    'Março',
-    'Abril',
-    'Maio',
-    'Junho',
-    'Julho',
-    'Agosto',
-    'Setembro',
-    'Outubro',
-    'Novembro',
-    'Dezembro'
-  ],
-  shortMonths: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
-  days: [
-    'domingo',
-    'segunda-feira',
-    'terça-feira',
-    'quarta-feira',
-    'quinta-feira',
-    'sexta-feira',
-    'sábado'
-  ],
-  shortDays: ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb']
-}
+import React, { SyntheticEvent } from 'react'
+import { TextField } from '@fluentui/react'
+import { CData, tipoData } from '@cecalc/utils'
+import { validarComoData } from '../../utils'
 
 interface IProps {
   rotulo: string
   valor?: Date
-  onChange: (novoValor: Date) => void
+  max?: Date
+  min?: Date
+  obrigatorio?: boolean
+  aoMudar: (novoValor?: Date) => void
 }
 
-export default function AppDataInput({ rotulo, valor, onChange }: IProps) {
-  const atualizar = (novoValor?: Date | null) => {
-    if (!novoValor) return
-    if (!new CData(novoValor).dataValida()) return
-    onChange(novoValor)
+const padraoData = /^\d{1,2}\/\d{1,2}\/\d{2,4}$/
+
+export default function AppDataInput({ rotulo, valor, max, min, obrigatorio, aoMudar }: IProps) {
+
+  obrigatorio = obrigatorio === true
+
+  const [entrada, mudarEntrada] = React.useState<string | undefined>(tipoData(valor) ? new CData(valor).local() : undefined);
+
+  const validar = (val: string): string => validarComoData(val, { obrigatorio, min, max})
+
+  const atualizar = (event: SyntheticEvent<HTMLElement, Event>, novoValor?: string) => {
+    mudarEntrada(novoValor)
+    if (!novoValor || !padraoData.test(novoValor!)) return aoMudar()
+    const data = new CData(novoValor)
+    if (!data.dataValida()) return aoMudar()
+    aoMudar(data.nativo())
   }
 
-  const formatarData = (data?: Date) => {
-    if (!tipoData(data)) return ''
-    return data.toLocaleDateString()
-  }
-
-  const converterEmData = (s: string) => {
-    try {
-      return converterStringEmData(s)
-    } catch (e) {
-      return null
-    }
-  }
+  const selecionar = (e: any) => e.target.select()
 
   return (
-    <DatePicker
+    <TextField
+      value={entrada}
       label={rotulo}
-      value={valor}
-      strings={datePickerStrings}
-      allowTextInput
-      formatDate={formatarData}
-      parseDateFromString={converterEmData}
-      pickerAriaLabel="Selecionar data"
-      placeholder="dd/mm/aaaa"
-      underlined={false}
-      onSelectDate={atualizar}
+      iconProps={{ iconName: 'Calendar' }}
+      style={{ textAlign: 'right', paddingRight: '32px' }}
+      aria-required={obrigatorio}
+      autoComplete="off"
+      required={obrigatorio}
+      validateOnLoad={false}
+      deferredValidationTime={500}
+      onFocus={selecionar}
+      onChange={atualizar}
+      onGetErrorMessage={validar}
     />
   )
 }

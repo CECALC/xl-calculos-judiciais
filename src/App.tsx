@@ -34,7 +34,6 @@ export const App = ({ host, platform }: IProps) => {
           : 
           <TelaWord />
         }
-        
       </div>
     </ErrorBoundary>
   )

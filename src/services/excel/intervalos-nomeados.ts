@@ -5,6 +5,7 @@ import { TValorExcel, TFormulaExcel } from './comuns'
 import { converterValorParaExcel, converterValorSerialExcelParaData, gerarTabelaDeFormatos } from './valores-e-formatos'
 
 export enum PREFIXO {
+  PARA_WORD = '_w_',
   PESSOAL = '_p_',
   PESSOAL_FORMULA = '_p_f_',
   CACHE = '_c_',
@@ -187,6 +188,11 @@ export const obterItensDisponiveisConfig = async () => {
   return await obterItensNomeados(filtro)
 }
 
+export const obterItensDisponiveisWord = async () => {
+  const filtro = new RegExp(`^${PREFIXO.PARA_WORD}`)
+  return await obterItensNomeados(filtro)
+}
+
 export const obterDadosParaArmazenamento = async (
   tipo: TIPO_PERSISTENCIA,
   nomes?: string[]
@@ -258,13 +264,13 @@ export const recuperarDados = async (tipo: TIPO_PERSISTENCIA, nomes?: string[]) 
 }
 
 export const prepararTransferenciaParaWord = async () => {
-  const itens = await obterItensNomeados()
+  const itens = await obterItensDisponiveisWord()
   const dados = {} as TDadosTransferencia
   for (let i = 0; i < itens.length; i++) {
     const item = itens[i]
     const dadosItem = await obterDadosDeItemNomeado(item)
     if (!dadosItem) continue
-    dados[item.name] = dadosItem.valoresExibidos
+    dados[nomeSemPrefixos(item.name)] = dadosItem.valoresExibidos
   }
   const pastaDeTrabalho = await obterNomePastaDeTrabalho()
   depurador.console.info('Preparando transferência para Word: ', dados)

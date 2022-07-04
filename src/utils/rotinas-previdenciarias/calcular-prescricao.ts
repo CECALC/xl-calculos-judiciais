@@ -4,18 +4,46 @@ import {
   dias360,
   diasSobrepostos,
   METODO_DIAS_360,
+  tipoData,
+  tipoNumero,
   TIPO_DURACAO
 } from '@cecalc/utils'
 import { depurador } from '..'
 
 
 export function calcularPrescricao(
-  prazo: number,
-  termoInicial: Date,
-  marcoInterruptivo: Date,
-  inicioSuspensao: Date,
-  fimSuspensao: Date
+  prazo?: number,
+  termoInicial?: Date,
+  marcoInterruptivo?: Date,
+  inicioSuspensao?: Date,
+  fimSuspensao?: Date
 ) {
+
+  /*
+  *
+  * BLOCO DE VALIDAÇÃO
+  *
+  **/
+  if (!tipoNumero(prazo)) { 
+    throw new Error('Prazo prescricional irregular.'); 
+  }
+
+  if (!tipoData(termoInicial)) { 
+    throw new Error('Termo inicial irregular.'); 
+  }
+  
+  if (!tipoData(marcoInterruptivo)) { 
+    throw new Error('Marco interruptivo irregular.'); 
+  }
+
+  if (!tipoData(inicioSuspensao)) { 
+    throw new Error('Termo inicial da suspensão irregular.'); 
+  }
+
+  if (!tipoData(fimSuspensao)) { 
+    throw new Error('Termo final da suspensão irregular.'); 
+  }
+
   try {
     const inicio = antesDe(termoInicial, marcoInterruptivo) ? termoInicial : marcoInterruptivo
     const interrupcao = antesDe(marcoInterruptivo, termoInicial) ? marcoInterruptivo : termoInicial

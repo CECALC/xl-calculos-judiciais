@@ -33,7 +33,11 @@ const classeBotao = mergeStyles({
   border: 'none'
 })
 
-export default function CalculadoraTempo() {
+interface IProps {
+  aoApagar: () => void
+}
+
+export default function CalculadoraTempo({ aoApagar }: IProps) {
   const [operacao, mudarOperacao] = useState(TIPO_OPERACAO.ADICAO)
   const [numeros, mudarNumeros] = useState({
     primeiro: {
@@ -54,21 +58,21 @@ export default function CalculadoraTempo() {
   })
   const [totalDias, mudarTotalDias] = useState(0)
 
-  const apagar = () => {
-    mudarOperacao(TIPO_OPERACAO.ADICAO)
-    mudarNumeros({
-      primeiro: {
-        [TIPO_NUMERO.ANOS]: 0,
-        [TIPO_NUMERO.MESES]: 0,
-        [TIPO_NUMERO.DIAS]: 0
-      },
-      segundo: {
-        [TIPO_NUMERO.ANOS]: 0,
-        [TIPO_NUMERO.MESES]: 0,
-        [TIPO_NUMERO.DIAS]: 0
-      }
-    })
-  }
+  // const apagar = () => {
+  //   mudarOperacao(TIPO_OPERACAO.ADICAO)
+  //   mudarNumeros({
+  //     primeiro: {
+  //       [TIPO_NUMERO.ANOS]: 0,
+  //       [TIPO_NUMERO.MESES]: 0,
+  //       [TIPO_NUMERO.DIAS]: 0
+  //     },
+  //     segundo: {
+  //       [TIPO_NUMERO.ANOS]: 0,
+  //       [TIPO_NUMERO.MESES]: 0,
+  //       [TIPO_NUMERO.DIAS]: 0
+  //     }
+  //   })
+  // }
 
   const atualizarOperacao = (novaOperacao?: TIPO_OPERACAO) => {
     if (novaOperacao === undefined) return
@@ -123,17 +127,17 @@ export default function CalculadoraTempo() {
         <AppNumeroInput
           rotulo="anos"
           valor={numeros.primeiro[TIPO_NUMERO.ANOS]}
-          onChange={val => atualizarNumeros(val, 'primeiro', TIPO_NUMERO.ANOS)}
+          aoMudar={val => atualizarNumeros(val, 'primeiro', TIPO_NUMERO.ANOS)}
         />
         <AppNumeroInput
           rotulo="meses"
           valor={numeros.primeiro[TIPO_NUMERO.MESES]}
-          onChange={val => atualizarNumeros(val, 'primeiro', TIPO_NUMERO.MESES)}
+          aoMudar={val => atualizarNumeros(val, 'primeiro', TIPO_NUMERO.MESES)}
         />
         <AppNumeroInput
           rotulo="dias"
           valor={numeros.primeiro[TIPO_NUMERO.DIAS]}
-          onChange={val => atualizarNumeros(val, 'primeiro', TIPO_NUMERO.DIAS)}
+          aoMudar={val => atualizarNumeros(val, 'primeiro', TIPO_NUMERO.DIAS)}
         />
       </Stack>
       <Stack horizontal horizontalAlign="center" styles={stackStyles} disableShrink={false}>
@@ -154,17 +158,17 @@ export default function CalculadoraTempo() {
         <AppNumeroInput
           rotulo="anos"
           valor={numeros.segundo[TIPO_NUMERO.ANOS]}
-          onChange={val => atualizarNumeros(val, 'segundo', TIPO_NUMERO.ANOS)}
+          aoMudar={val => atualizarNumeros(val, 'segundo', TIPO_NUMERO.ANOS)}
         />
         <AppNumeroInput
           rotulo="meses"
           valor={numeros.segundo[TIPO_NUMERO.MESES]}
-          onChange={val => atualizarNumeros(val, 'segundo', TIPO_NUMERO.MESES)}
+          aoMudar={val => atualizarNumeros(val, 'segundo', TIPO_NUMERO.MESES)}
         />
         <AppNumeroInput
           rotulo="dias"
           valor={numeros.segundo[TIPO_NUMERO.DIAS]}
-          onChange={val => atualizarNumeros(val, 'segundo', TIPO_NUMERO.DIAS)}
+          aoMudar={val => atualizarNumeros(val, 'segundo', TIPO_NUMERO.DIAS)}
         />
       </Stack>
       <Stack horizontal horizontalAlign="end" tokens={stackTokens} styles={stackStyles}>
@@ -190,7 +194,7 @@ export default function CalculadoraTempo() {
         </DocumentCard>
       </Stack>
       <Stack horizontal horizontalAlign="end" styles={stackStyles} disableShrink={false}>
-        <IconButton iconProps={{ iconName: 'EraseTool' }} title="apagar" onClick={apagar} />
+        <IconButton iconProps={{ iconName: 'EraseTool' }} title="apagar" onClick={aoApagar} />
       </Stack>
     </>
   )
