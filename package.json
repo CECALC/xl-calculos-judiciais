@@ -3,7 +3,7 @@
   "version": "1.4.0",
   "private": true,
   "dependencies": {
-    "@cecalc/analisador-de-texto": "^4.2.0",
+    "@cecalc/analisador-de-texto": "^4.2.1",
     "@cecalc/utils": "^3.4.0",
     "@fluentui/font-icons-mdl2": "^8.5.5",
     "@fluentui/react": "^8.104.1",
@@ -78,6 +78,6 @@
     ]
   },
   "engines": {
-    "node": "~18.12.1"
+    "node": "18.x"
   }
 }
