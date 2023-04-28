@@ -42,7 +42,7 @@
     "manifest:prod": "cross-env NODE_ENV=production run-s copy:manifest validate",
     "check-es5": "es-check es5 build/static/js/**/*.js --verbose",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
+    "deploy": "cross-env NODE_DEBUG=gh-pages gh-pages -d build",
     "start": "cross-env NODE_ENV=development run-s copy:manifest react-scripts-start",
     "react-scripts-start": "react-scripts start",
     "prebuild": "cross-env NODE_ENV=production run-s copy:manifest validate",
