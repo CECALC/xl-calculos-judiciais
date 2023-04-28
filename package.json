@@ -1,6 +1,6 @@
 {
   "name": "xl-calculos-judiciais",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "private": true,
   "dependencies": {
     "@cecalc/analisador-de-texto": "^4.2.1",
@@ -43,6 +43,7 @@
     "check-es5": "es-check es5 build/static/js/**/*.js --verbose",
     "predeploy": "npm run build",
     "deploy": "cross-env NODE_DEBUG=gh-pages gh-pages -d build",
+    "deploy-alt": "git push origin :gh-pages && git subtree push --prefix build origin gh-pages",
     "start": "cross-env NODE_ENV=development run-s copy:manifest react-scripts-start",
     "react-scripts-start": "react-scripts start",
     "prebuild": "cross-env NODE_ENV=production run-s copy:manifest validate",
