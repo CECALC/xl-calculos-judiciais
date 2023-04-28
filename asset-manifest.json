@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/xl-calculos-judiciais/static/css/main.464f9450.css",
+    "main.js": "/xl-calculos-judiciais/static/js/main.277b4e8a.js",
+    "static/js/496.1f4810d3.chunk.js": "/xl-calculos-judiciais/static/js/496.1f4810d3.chunk.js",
+    "index.html": "/xl-calculos-judiciais/index.html",
+    "main.464f9450.css.map": "/xl-calculos-judiciais/static/css/main.464f9450.css.map",
+    "main.277b4e8a.js.map": "/xl-calculos-judiciais/static/js/main.277b4e8a.js.map",
+    "496.1f4810d3.chunk.js.map": "/xl-calculos-judiciais/static/js/496.1f4810d3.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.464f9450.css",
+    "static/js/main.277b4e8a.js"
+  ]
+}
