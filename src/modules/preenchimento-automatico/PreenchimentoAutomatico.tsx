@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
-import { 
-  IStackTokens, 
-  Stack, 
-  DefaultButton, 
-  PrimaryButton, 
+import {
+  IStackTokens,
+  Stack,
+  DefaultButton,
+  PrimaryButton,
   IChoiceGroupOption
 } from '@fluentui/react'
 import { AnalisadorDeTexto, IOpcaoAnalisador } from '@cecalc/analisador-de-texto'
@@ -69,23 +69,24 @@ export default class PreenchimentoAutomatico extends Component {
 
   verificar(documento: string) {
     if (!documento.length) return
-    this.setState({
-      analisador: new AnalisadorDeTexto(documento),
-      carregado: true
-    })
-    if (this.state.analisador && this.state.analisador.identificado) {
+    const analisador = new AnalisadorDeTexto(documento)
+    if (analisador && analisador.identificado) {
       this.setState({
-        titulo: this.state.analisador.obterNome(),
-        descricao: this.state.analisador.obterResumo(),
+        analisador,
+        carregado: true,
+        titulo: analisador.obterNome(),
+        descricao: analisador.obterResumo(),
         identificado: true
       })
-      return
+    } else {
+      this.setState({
+        analisador: null,
+        carregado: false,
+        titulo: 'Padrão Desconhecido',
+        descricao: [['', 'Texto não identificado']],
+        identificado: false
+      })
     }
-    this.setState({
-      titulo: 'Padrão Desconhecido',
-      descricao: [['', 'Texto não identificado']],
-      identificado: false
-    })
   }
 
   async selecionar() {
@@ -151,8 +152,7 @@ export default class PreenchimentoAutomatico extends Component {
           icone="AutoEnhanceOn"
           ativo={this.state.carregado && this.state.identificado}
           erro={this.state.carregado && !this.state.identificado}
-          atualizando={this.state.preenchendo}
-        >
+          atualizando={this.state.preenchendo}>
           <Stack>
             <CaixaDeTexto
               carregado={this.state.carregado}
